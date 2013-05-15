@@ -1,0 +1,14 @@
+{
+    "name": "ef",
+    "version": "1.0",
+    "maintainers": [
+        { "name": "otakustay", "email": "otakustay@gmail.com" }
+    ],
+    "dependencies": {
+        "er": "3.x",
+        "esui": "3.x"
+    },
+    "main": "main",
+    "description": "EF是ER与ESUI整合而成的高效率业务系统开发框架。",
+    "homepage": "https://github.com/ecomfe/ef"
+}
