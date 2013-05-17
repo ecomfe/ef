@@ -1,4 +1,4 @@
-# ER (Enterprise Framework)
+# EF (Enterprise Framework)
 
 EF是[ER](https://github.com/ecomfe/er)与[ESUI](https://github.com/ecomfe/esui)整合而成的高效率业务系统开发框架。
 
