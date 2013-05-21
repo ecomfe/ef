@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>吃！</title>
+</head>
+<body>
+    <div id="main"></div>
+    <script src="src/common/esl-1.3.0.min.js"></script>
+    <script src="src/common/sugar-1.3.9.min.js"></script>
+    <script>
+        require.config({
+            baseUrl: './src',
+            paths: {
+                css: 'common/esl-css'
+            },
+            packages: [
+                {
+                    name: 'er',
+                    location: '../lib/er/src',
+                    main: 'main'
+                },
+                {
+                    name: 'esui',
+                    location: '../lib/esui/src',
+                    main: 'main'
+                },
+                {
+                    name: 'ef',
+                    location: '../../../src',
+                    main: 'main'
+                }
+            ]
+        });
+        require(
+            ['common/main'],
+            function (main) {
+                main.init();
+            }
+        );
+    </script>
+</body>
+</html>
