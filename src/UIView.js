@@ -12,6 +12,15 @@ define(
             View.apply(this, arguments);
         }
 
+        function getProperty(target, path) {
+            var value = target;
+            for (var i = 0; i < path.length; i++) {
+                value = value[path[i]];
+            }
+
+            return value;
+        }
+
         /**
          * 替换元素属性中的特殊值
          *
@@ -20,11 +29,19 @@ define(
          * @public
          */
         UIView.prototype.replaceValue = function (value) {
+            if (typeof value !== 'string') {
+                return value;
+            }
+
             var prefix = value.charAt(0);
             var actualValue = value.substring(1);
 
             if (prefix === '@') {
-                return this.model.get(actualValue);
+                var path = actualValue.split('.');
+                var value = this.model.get(path[0]);
+                return path.length > 1
+                    ? getProperty(value, path.slice(1))
+                    : value;
             }
             else {
                 return value;
@@ -102,7 +119,7 @@ define(
                 properties: this.uiProperties,
                 valueReplacer: require('er/util').bind(this.replaceValue, this)
             };
-            require('esui').init(container, options);
+            var controls = require('esui').init(container, options);
 
             this.bindEvents();
         };
