@@ -26,6 +26,7 @@ app.get(
     '/', 
     function(req, res) {
         res.writeHead(302, { 'Location': '/demo/chi/index.htm' });
+        res.end();
     }
 );
 var member = require('./member');
