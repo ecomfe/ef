@@ -119,7 +119,7 @@ define(
                 properties: this.uiProperties,
                 valueReplacer: require('er/util').bind(this.replaceValue, this)
             };
-            var controls = require('esui').init(container, options);
+            require('esui').init(container, options);
 
             this.bindEvents();
         };
