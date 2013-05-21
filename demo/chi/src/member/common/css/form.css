@@ -1,0 +1,337 @@
+/* 清除浮动 */
+.form-row,
+.form-line,
+.form-single-line,
+.form-value,
+.form-value-mini,
+.edit-submit {
+    zoom:1;
+}
+
+.form-row:after,
+.form-line:after,
+.form-single-line:after,
+.form-value:after,
+.form-value-mini:after,
+.edit-submit:after {
+    content:"\0020"; 
+    display:block;
+    height:0; 
+    visibility:hidden; 
+    clear:both;
+}
+
+
+/* 表单部分 */
+.edit-form {
+    background:#FFF;
+    margin-bottom:10px;
+    padding: 5px;
+}
+
+/* 表单头部 */
+.edit-form .form-head {
+    border-width: 1px 1px 0 1px;
+    border-style: solid;
+    border-color: #9ecae8;
+    background: #c7deed;
+    height:28px;
+}
+
+.edit-form .form-headcntr {
+    height:27px;
+    line-height:27px;
+    color:#1c4a79;
+    border-top:1px solid #d8e8f2;
+}
+
+.edit-form .form-headcntr h2 {
+    padding-left:20px;
+    font-weight:700;
+    font-size:12px;
+}
+
+
+/* 表单行 */
+.form-row {
+    padding:2px 0;
+}
+
+.form-line,
+.form-single-line,
+.form-key,
+.form-key-mini,
+.form-value-mini,
+.form-value {
+    float:left;
+    display:inline;
+    line-height:34px;
+}
+
+.form-line,
+.form-value {
+    width: auto;
+}
+
+.form-value-mini {
+    width:300px;
+    padding:2px;
+}
+.ui-dialog-body .form-value {
+    width:auto;
+}
+
+.form-value-preview {
+    line-height:0;
+}
+
+/* 表单key */
+.form-key,
+.form-key-mini {
+    float:left;
+    padding:2px 0 3px 10px;
+    width:85px;
+    color:#333333;
+}
+
+.form-key-mini {
+    padding-left:0;
+}
+
+
+/* 表单value */
+.form-value {
+    padding:2px;
+}
+.form-value-caution {
+	float:left;
+	color:red;
+}
+
+
+.form-tip{
+	color:#999999;
+}
+/*有必填标记的表单value*/
+.form-value-required{
+    position:relative;
+    left:-8px;
+}
+/*必填标记*/
+.required-icon{
+    float:left;
+    margin-right:3px;
+    color:red;
+}
+/* 单独占一行 */
+.form-single-line {
+    padding:2px 0 2px 36px;
+    width:500px;
+    clear:both;
+}
+
+.form-line {
+    clear:both;
+}
+
+/* 表单内控件样式微调 */
+.form-row .ui-checkbox,
+.form-row .ui-radiobox {
+    display: inline;
+    margin-top:5px;
+}
+
+.form-row .ui-text {
+    margin-right:8px;
+}
+
+.form-row .ui-checkbox-label,
+.form-row .ui-radiobox-label {
+    display: inline;
+    line-height: 24px;
+    margin: 0 8px 0 0px;
+}
+
+/* 表单文字 */
+.form-text {
+    float:left;
+    display:inline;
+    margin-right:8px;
+    line-height:34px;
+}
+
+/* 表单小文字 */
+.form-text-s {
+    font-size:10px;
+    color:#999;
+}
+.form-text-arrow{
+    font-family:simsun;
+    font-size:12px;
+}
+/* 表单内容块*/
+.form-content-block {
+    padding-left:98px;
+}
+
+.form-row .ui-combobox {
+    float:left;
+    margin-right:5px;
+}
+
+.form-row .ui-select,
+.form-row .ui-combobox,
+.form-row .ui-button,
+.form-row .ui-text,
+.form-row .ui-textarea,
+.form-row .ui-cal,
+.form-row .ui-buttonmenu,
+.form-row .ui-combosearchlistsel {
+    margin-top: 5px;
+}
+
+.form-row .ui-text {
+  *margin-top:1px;
+  vertical-align: middle;
+  *height: 21px;
+  *line-height: 21px;
+}
+
+.form-row .ui-textarea{
+	margin-right:5px;
+}
+/* 提交部分 */
+.edit-submit {
+    /*margin:0 0 0 21px;*/
+    zoom:1;
+}
+
+
+/* 表单验证提示 */
+.validate-error {
+    padding:5px;
+    display:block;
+}
+.validate {
+    /*
+    background:#FEF7DB;
+    border:1px solid #F0DDA5;
+    */
+    position:relative;
+    zoom:1;
+    height: 25px;
+}
+
+.validate-text {
+    background: none repeat scroll 0 0 #FEDBDC;
+    border: 1px solid #F0CCCC;
+    color: #DD6666;
+    display: block;
+    height: 25px;
+    line-height: 25px;
+    margin-top: 8px;
+    padding-left: 45px;
+}
+
+.validate-text-nobr {
+    color: red;
+    line-height: 34px;
+    padding-left: 5px;
+}
+
+.validate-icon {
+    background:#FEDBDC url(../../assets/img/allbgs.png) -23px -208px no-repeat;
+    position: absolute;
+    left: 15px;
+    top: 7px;
+    width: 14px;
+    height: 14px;
+}
+
+/* 表单分支链接（支线任务） */
+.form-branch-task {
+    font-family:STHeiti, SimSun;
+    position:absolute;
+    right:20px;
+    top:20px;
+}
+
+/* 选填 ,灰色*/
+.form-optional,.form-grey {
+    float:left;
+    display:inline;
+    margin-left:5px;
+    line-height:24px;
+    color:#CCC;
+}
+
+.ui-richsel-entry .form-optional {
+    line-height:22px;
+}
+
+.form-grey{float:none;}
+.form-grey2{color:#CCC;}
+/* 表单提示信息（先放在这里，组件做好再转移） */
+.ui-forminfo {
+    position:relative;
+    margin:1px;
+    background:#EFF7F9;
+    border:1px solid #C5DFF0;
+    clear:both;
+    zoom:1;
+}
+
+.ui-forminfo .ui-link {
+    text-decoration:underline;
+}
+
+.ui-forminfo-icon {
+    position:absolute;
+    width:14px;
+    height:17px;
+    background:url(../../assets/img/BlockSprites.png) no-repeat -141px -315px;
+    left:40px;
+    top:6px;
+}
+
+.ui-forminfo-text {
+    padding:4px 10px 4px 64px;
+    line-height:24px;
+    color:#8BA9C4;
+}
+
+.ui-forminfo-text strong {
+    margin:0 3px;
+}
+
+/**
+ * 表单内的iframe
+ */
+.form-iframe {
+    width:850px;
+    height:450px;
+    overflow-x:hidden;
+    border:none;
+}
+
+.form-iframe-wrapper {
+    border-top:1px solid #DCE3E9;
+    margin:10px;
+    padding:5px 0;
+    width:850px;
+}
+
+/**
+ * 缩进HACK
+ */
+.indent-checkbox {
+    padding-left: 17px;
+    *padding-left: 23px;
+}
+/**
+ * 表单元素组缩进
+ */
+.form-row-group
+{
+    margin-left: 35px;
+}

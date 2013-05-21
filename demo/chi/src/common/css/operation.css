@@ -1,0 +1,8 @@
+.operation-remove {
+    color: red;
+    cursor: pointer;
+}
+.operation-modify {
+    color: #666666;
+    cursor: pointer;
+}
