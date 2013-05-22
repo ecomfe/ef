@@ -36,6 +36,11 @@ data-ui-type="Form" data-ui-id="form" data-ui-submit-button="submit-button">
 	        <div class="form-value">
                 <input data-ui-type="TextBox" data-ui-id="amount"
                  data-ui-name="amount" data-ui-mode="text"
+                 data-ui-title="金额" 
+                 data-ui-required="required"
+                 data-ui-requiredErrorMessage="金额不能为空"
+                 data-ui-pattern="/^[0-9]\d*(\.\d+)?$/"
+                 data-ui-patternErrorMessage="金额必须为整数"
                  data-ui-value="@detail.amount" />
 	        </div>
 	    </div>
