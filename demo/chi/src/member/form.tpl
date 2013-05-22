@@ -1,5 +1,8 @@
 <!-- target: memberForm -->
-<form class="edit-form" data-ui-type="Form" data-ui-id="form" data-ui-submitButton="submitButton">
+<div id="crumbContainer">
+    <div data-ui-type="Crumb" data-ui-id="formCrumb" data-ui-name="formCrumb" data-ui-path="@crumbPath"></div>
+</div>
+<form class="edit-form" data-ui-type="Form" data-ui-id="form" data-ui-submit-button="submitButton">
     <div class="form-body">
         <div class="form-row">
             <div class="form-key">姓名：</div>
@@ -36,7 +39,7 @@
             <div class="form-key">余额：</div>
             <div class="form-value">
                 <input data-ui-type="TextBox" data-ui-id="amount"
-                 data-ui-name="amount" data-ui-mode="text"
+                 data-ui-name="balance" data-ui-mode="text"
                  data-ui-value="@detail.balance" />
             </div>
         </div>
@@ -44,10 +47,8 @@
     <div class="submit-row">
         <div class="form-row">
             <div class="form-value">
-                <div data-ui-type="Button" data-ui-id="submitButton"
-                 data-ui-skin="spring">保存</div>
-                <div data-ui-type="Button"
-                 data-ui-id="cancelButton">取消</div>
+                <div data-ui-type="Button" data-ui-id="submitButton" data-ui-skin="spring">保存</div>
+                <div data-ui-type="Button" data-ui-id="cancelButton">取消</div>
             </div>
         </div>
     </div>

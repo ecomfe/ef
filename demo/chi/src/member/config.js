@@ -14,7 +14,7 @@ define(
                 type: 'member/Form'
             },
             {
-                path: '/member/update',
+                path: '/member/modify',
                 type: 'member/Form'
             }
         ];

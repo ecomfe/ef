@@ -6,7 +6,8 @@ define(
             Action.apply(this, arguments);
         }
 
-        function submit() {
+        function submitHandle(e) {
+            this.model.save(e.data);
         }
 
         MemberForm.prototype.modelType = require('./FormModel');
@@ -14,7 +15,7 @@ define(
         MemberForm.prototype.viewType = require('./FormView');
 
         MemberForm.prototype.initBehavior = function() {
-            //this.view.on('buy', require('er/util').bind(buyBook, this))
+            this.view.on('submitted', submitHandle.bind(this));
         };
 
         require('er/util').inherits(MemberForm, Action);

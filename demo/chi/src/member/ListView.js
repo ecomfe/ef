@@ -2,6 +2,7 @@ define(
     function (require) {
         require('er/tpl!./list.tpl');
         require('esui/Table');
+        require('esui/extension/Command');
 
         var MemberType = require('./config').MemberType;
         var tableFields = [
@@ -56,8 +57,20 @@ define(
 
         var UIView = require('ef/UIView');
 
+        function handleCommand(e) {
+            if (e.name === 'modify') {
+                this.fire('modifyClicked', {id: e.args});
+            }
+            if (e.name === 'remove') {
+                this.fire('removeClicked', {id: e.args});
+            }
+        }
+
         function MemberListView() {
             UIView.apply(this, arguments);
+            this.uiEvents = {
+                'memberList:command': handleCommand.bind(this)
+            };
         }
 
         MemberListView.prototype.template = 'memberList';
@@ -70,17 +83,6 @@ define(
                 subrow: false,
                 followHead: true,
                 selectMode: 'line'
-            }
-        };
-
-        MemberListView.prototype.uiEvents = {
-            'memberList:command': function (e) {
-                if (e.name === 'modify') {
-                    this.fire('modifyClicked', {id: e.args});
-                }
-                if (e.name === 'remove') {
-                    this.fire('removeClicked', {id: e.args});
-                }
             }
         };
 
