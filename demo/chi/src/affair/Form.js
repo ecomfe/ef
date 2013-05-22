@@ -2,23 +2,24 @@ define(
     function(require) {
         var Action = require('er/Action');
 
-        function AffairRead() {
+        function AffairForm() {
             Action.apply(this, arguments);
         }
 
-        function submit() {
+        function submitAffair(e) {
+            this.model.save(e.affair);
         }
 
-        AffairRead.prototype.modelType = require('./FormModel');
+        AffairForm.prototype.modelType = require('./FormModel');
 
-        AffairRead.prototype.viewType = require('./FormView');
+        AffairForm.prototype.viewType = require('./FormView');
 
-        AffairRead.prototype.initBehavior = function() {
-            //this.view.on('buy', require('er/util').bind(buyBook, this))
+        AffairForm.prototype.initBehavior = function() {
+            this.view.on('submit', require('er/util').bind(submitAffair, this));
         };
 
-        require('er/util').inherits(AffairRead, Action);
+        require('er/util').inherits(AffairForm, Action);
 
-        return AffairRead;
+        return AffairForm;
     }
 );

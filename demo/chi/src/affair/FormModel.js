@@ -1,6 +1,7 @@
 define(
     function (require) {
         var Model = require('er/Model');
+        var UIModel = require('ef/UIModel');
         var datasource = require('er/datasource');
 
         var affair = {
@@ -62,6 +63,7 @@ define(
             Model.apply(this, arguments);
 
             var url = this.get('url');
+
             this.datasource = {
                 detail: datasource.constant(affair),
                 members: datasource.constant(members),
@@ -85,9 +87,30 @@ define(
             //         }
             //     )
             // };
-    }
+        }
 
-        require('er/util').inherits(AffairFormModel, Model);
+        AffairFormModel.prototype.save = function(data) {
+            // 把这些数据set到model里面
+            var postData = this.adaptAndFill(data);
+            var ajax = require('er/ajax');
+            ajax.post('/affair/save', postData);
+        };
+
+        AffairFormModel.prototype.formatters = {
+            time: UIModel.formatters.time
+        };
+
+
+        AffairFormModel.prototype.adaptAndFill = function(data) {
+            var postKeys = Object.keys(data); 
+            this.fill(data);
+            var postData = this.getPart.apply(this, postKeys);
+
+            return postData;
+            
+        };
+
+        require('er/util').inherits(AffairFormModel, UIModel);
         return AffairFormModel;
     }
 );

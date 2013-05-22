@@ -1,6 +1,6 @@
 <!-- target: affairForm -->
 <form class="edit-form"
-data-ui-type="Form" data-ui-id="form" data-ui-submitButton="submitButton">
+data-ui-type="Form" data-ui-id="form" data-ui-submit-button="submit-button">
 	<div class="form-body">
 	    <div class="form-row">
 	        <div class="form-key">当前余额：</div>
@@ -51,10 +51,10 @@ data-ui-type="Form" data-ui-id="form" data-ui-submitButton="submitButton">
 	<div class="submit-row">
 	    <div class="form-row">
 	        <div class="form-value">
-	            <div data-ui-type="Button" data-ui-id="submitButton"
+	            <div data-ui-type="Button" data-ui-id="submit-button"
 	             data-ui-skin="spring">保存并继续</div>
 	            <div data-ui-type="Button"
-	             data-ui-id="cancelButton">取消新建</div>
+	             data-ui-skin="link" data-ui-id="cancel-button">取消新建</div>
 	        </div>
 	    </div>
 	</div>
