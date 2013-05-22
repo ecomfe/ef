@@ -9,10 +9,43 @@ define(
 
         MemberList.prototype.viewType = require('./ListView');
 
+        function findWhatByID(results, id, what) {
+            for (var i = 0; i < results.length; i++) {
+                if (results[i].id === parseInt(id)) {
+                    return results[i][what];
+                }
+            }
+        }
+
+        function removeByID(id) {
+            this.model.removeData(id).then(removeCallBack.bind(this));
+        }
+
+        function removeCallBack() {
+            var options = {
+                force: true
+            };
+            var locator = require('er/locator');
+            locator.reload();
+        }
+
         MemberList.prototype.initBehavior = function () {
             var action = this;
+            var Dialog = require('esui/Dialog');
             this.view.on('removeClicked', function (e) {
-                alert('ID:' + e.id + 'has been removed 啊假假地～');
+                var name = findWhatByID(
+                    action.model.get('list').results,
+                    e.args, 
+                    'name'
+                );
+                Dialog.confirm({
+                        title: '删除成员警告',
+                        content: '是否确定删除成员：' + name,
+                        onok: removeByID.bind(action, e.args),
+                        oncancel: function(dialog) {
+                        },
+                        width: 400
+                    });
             });
             this.view.on('modifyClicked', function (e) {
                 action.redirect('/member/update~id=' + e.id);

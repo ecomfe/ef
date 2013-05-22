@@ -7,7 +7,7 @@ define(
         }
 
         function submitHandle(e) {
-            this.model.submitData(e.data).then(saveCallBack.bind(this));;
+            this.model.submitData(e.data).then(saveCallBack.bind(this));
         }
 
         function cancelHandle(e) {

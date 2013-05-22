@@ -48,7 +48,7 @@ define(
                 width: 150,
                 content: function (item) {
                     return '<span class="operation-modify" data-command="modify" data-command-args="'
-                        + item.id + '">编辑</span>'
+                        + item.id + '|' + item.name + '">编辑</span>'
                         + ' | '
                         + '<span class ="operation-remove" data-command="remove" data-command-args="'
                         + item.id + '">删除</span>'
@@ -63,7 +63,7 @@ define(
                 this.fire('modifyClicked', {id: e.args});
             }
             if (e.name === 'remove') {
-                this.fire('removeClicked', {id: e.args});
+                this.fire('removeClicked', {args: e.args});
             }
             if (e.name === 'create') {
                 this.fire('createNewMember', {});
