@@ -33,7 +33,7 @@ define(
             this.set('crumbPath', crumbPath);
         };
 
-        MemberFormModel.prototype.save = function (data) {
+        MemberFormModel.prototype.update = function (data) {
             var postData = this.adaptAndFill(data);
             var ajax = require('er/ajax');
             ajax.post('/member/update', postData);
@@ -44,6 +44,7 @@ define(
         };
 
         MemberFormModel.prototype.adaptAndFill = function (data) {
+            debugger;
             var postKeys = Object.keys(data); 
             this.fill(data);
             var postData = this.getPart.apply(this, postKeys);

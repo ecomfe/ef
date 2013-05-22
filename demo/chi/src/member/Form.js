@@ -7,7 +7,16 @@ define(
         }
 
         function submitHandle(e) {
-            this.model.save(e.data);
+            this.model.update(e.data).then(saveCallBack.bind(this));;
+        }
+
+        function saveCallBack(response) {
+            if (response.success === true) {
+                this.redirect('/member/list');
+            }
+            else {
+                alert('出错啦！');
+            }
         }
 
         MemberForm.prototype.modelType = require('./FormModel');
