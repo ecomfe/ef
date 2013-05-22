@@ -11,7 +11,8 @@ define(
                 id: 1
             },
             type: 0,
-            amount: 32
+            amount: 32,
+            balance: 10000
         };
         var members = [
             {
@@ -64,29 +65,41 @@ define(
 
             var url = this.get('url');
 
-            this.datasource = {
-                detail: datasource.constant(affair),
-                members: datasource.constant(members),
-                types: datasource.constant(types)
-            };
-            // this.datasource = {
-            //     detail: datasource.remote(
-            //         '/affair/read', 
-            //         {
-            //             method: 'GET',
-            //             data: {
-            //                 id: url.getQuery('id'),
-            //             }
-            //         }
-            //     )
-            //     members: datasource.remote(
-            //         '/member/list', 
-            //         {
-            //             method: 'GET',
-            //             data: {}
-            //         }
-            //     )
-            // };
+            if (this.get('formType') === 'update') {     
+                this.datasource = {
+                    detail: datasource.constant(affair),
+                    members: datasource.constant(members),
+                    types: datasource.constant(types)
+                };
+                // this.datasource = {
+                //     detail: datasource.remote(
+                //         '/affair/read', 
+                //         {
+                //             method: 'GET',
+                //             data: {
+                //                 id: url.getQuery('id'),
+                //             }
+                //         }
+                //     )
+                //     members: datasource.remote(
+                //         '/member/list', 
+                //         {
+                //             method: 'GET',
+                //             data: {}
+                //         }
+                //     )
+                // };
+            }
+            else {     
+                this.datasource = {
+                    members: datasource.constant(members),
+                    types: datasource.constant(types),
+                    detail: datasource.constant({
+                        balance: 0,
+                        member: {}
+                    }),
+                };
+            }
         }
 
         AffairFormModel.prototype.save = function(data) {

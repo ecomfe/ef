@@ -2,6 +2,7 @@ define(
     function (require) {
         require('er/tpl!./form.tpl');
         require('esui/Form');
+        require('esui/Label');
         require('esui/Button');
         require('esui/TextBox');
         require('esui/Select');

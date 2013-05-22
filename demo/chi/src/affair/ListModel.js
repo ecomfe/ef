@@ -6,6 +6,7 @@ define(
         var affairs = [];
         for (var i = 0; i < 20; i++) {
             var item = {
+                id: i,
                 time: '2013-05-21',
                 member: {
                     name: '李享'

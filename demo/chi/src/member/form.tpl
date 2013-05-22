@@ -32,7 +32,8 @@
             <div class="form-key">生日：</div>
             <div class="form-value">
                 <div data-ui-type="Calendar" data-ui-id="birthday"
-                 data-ui-name="birthday" data-ui-value="@detail.birthday"></div>
+                 data-ui-name="birthday" data-ui-value="@detail.birthday"
+                 data-ui-range="1970-01-01,2000-12-31"></div>
             </div>
         </div>
     </div>

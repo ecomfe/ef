@@ -5,7 +5,8 @@ data-ui-type="Form" data-ui-id="form" data-ui-submit-button="submit-button">
 	    <div class="form-row">
 	        <div class="form-key">当前余额：</div>
 	        <div class="form-value">
-	        	<label>2222</label>
+	        	<label data-ui-type="Label"
+	        	data-ui-id="balance" data-ui-text="@detail.balance"></label>
 	        </div>
 	    </div>
 	    <div class="form-row">
@@ -20,7 +21,7 @@ data-ui-type="Form" data-ui-id="form" data-ui-submit-button="submit-button">
 	        <div class="form-value">
             	<div data-ui-type="Select" data-ui-id="member"
             	 data-ui-name="member" data-ui-datasource="@members"
-            	 data-value="@detail.member.id"></div>
+            	 data-ui-value="@detail.member.id"></div>
 	        </div>
 	    </div>
 	    <div class="form-row">
@@ -28,7 +29,7 @@ data-ui-type="Form" data-ui-id="form" data-ui-submit-button="submit-button">
 	        <div class="form-value">
             	<div data-ui-type="Select" data-ui-id="type"
             	 data-ui-name="type" data-ui-datasource="@types"
-            	 data-value="@detail.type"></div>
+            	 data-ui-value="@detail.type"></div>
 	        </div>
 	    </div>
 	    <div class="form-row">
@@ -38,7 +39,6 @@ data-ui-type="Form" data-ui-id="form" data-ui-submit-button="submit-button">
                  data-ui-name="amount" data-ui-mode="text"
                  data-ui-title="金额" 
                  data-ui-required="required"
-                 data-ui-requiredErrorMessage="金额不能为空"
                  data-ui-pattern="/^[0-9]\d*(\.\d+)?$/"
                  data-ui-patternErrorMessage="金额必须为整数"
                  data-ui-value="@detail.amount" />

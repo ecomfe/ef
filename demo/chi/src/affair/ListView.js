@@ -1,7 +1,10 @@
 define(
     function (require) {
         require('er/tpl!./list.tpl');
+        require('esui/Button');
         require('esui/Table');
+        require('esui/extension/Command');
+
 
         var AffairType = require('./config').AffairType;
         var tableFields = [
@@ -43,16 +46,36 @@ define(
                 tip :'开支后余额',
                 width: 50,
                 content: 'balance'
+            },
+            {
+                title: '操作',
+                width: 150,
+                content: function (item) {
+                    return '<span class="operation-modify" data-command="modify" data-command-args="'
+                        + item.id + '">编辑</span>'
+                }
             }
         ];
 
         var UIView = require('ef/UIView');
 
-        function AffairListView() {
-            UIView.apply(this, arguments);
+        function handleCommand(e) {
+            if (e.name === 'modify') {
+                this.fire('modify', {id: e.args});
+            }
+            if (e.name === 'create') {
+                this.fire('create', {});
+            }
         }
 
-        AffairListView.prototype.template = 'affairList';
+        function AffairListView() {
+            UIView.apply(this, arguments);
+            this.uiEvents = {
+                'list:command': handleCommand.bind(this),
+            };
+        }
+
+        AffairListView.prototype.template = 'affairListPage';
 
         AffairListView.prototype.uiProperties = {
             list: {
@@ -64,6 +87,14 @@ define(
                 selectMode: 'line'
             }
         };
+
+        AffairListView.prototype.enterDocument = function () {
+            UIView.prototype.enterDocument.apply(this, arguments);
+            this.get('createButton').on(
+                'click', 
+                handleCommand.bind(this, {name: 'create'})
+            );
+        }
 
         require('er/util').inherits(AffairListView, UIView);
         return AffairListView;

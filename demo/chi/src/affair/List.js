@@ -10,6 +10,17 @@ define(
 
         AffairList.prototype.viewType = require('./ListView');
 
+
+        AffairList.prototype.initBehavior = function () {
+            var action = this;
+            this.view.on('modify', function (e) {
+                action.redirect('/affair/update~id=' + e.id);
+            });
+            this.view.on('create', function (e) {
+                action.redirect('/affair/create');
+            });
+        };
+
         require('er/util').inherits(AffairList, Action);
         return AffairList;
     }
