@@ -7,7 +7,11 @@ define(
         }
 
         function submitHandle(e) {
-            this.model.update(e.data).then(saveCallBack.bind(this));;
+            this.model.submitData(e.data).then(saveCallBack.bind(this));;
+        }
+
+        function cancelHandle(e) {
+            this.redirect('/member/list');
         }
 
         function saveCallBack(response) {
@@ -25,6 +29,7 @@ define(
 
         MemberForm.prototype.initBehavior = function() {
             this.view.on('submitted', submitHandle.bind(this));
+            this.view.on('canceled', cancelHandle.bind(this));
         };
 
         require('er/util').inherits(MemberForm, Action);

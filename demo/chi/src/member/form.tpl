@@ -35,19 +35,11 @@
                  data-ui-name="birthday" data-ui-value="@detail.birthday"></div>
             </div>
         </div>
-        <div class="form-row">
-            <div class="form-key">余额：</div>
-            <div class="form-value">
-                <input data-ui-type="TextBox" data-ui-id="amount"
-                 data-ui-name="balance" data-ui-mode="text"
-                 data-ui-value="@detail.balance" />
-            </div>
-        </div>
     </div>
     <div class="submit-row">
         <div class="form-row">
             <div class="form-value">
-                <div data-ui-type="Button" data-ui-id="submitButton" data-ui-skin="spring">保存</div>
+                <div data-ui-type="Button" data-ui-id="submitButton" data-ui-skin="spring">${submitButtonText}</div>
                 <div data-ui-type="Button" data-ui-id="cancelButton">取消</div>
             </div>
         </div>

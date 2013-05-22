@@ -15,7 +15,10 @@ define(
                 alert('ID:' + e.id + 'has been removed 啊假假地～');
             });
             this.view.on('modifyClicked', function (e) {
-                action.redirect('/member/modify~id=' + e.id);
+                action.redirect('/member/update~id=' + e.id);
+            });
+            this.view.on('createNewMember', function (e) {
+                action.redirect('/member/create');
             });
         };
 

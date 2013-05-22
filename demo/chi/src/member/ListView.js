@@ -2,6 +2,7 @@ define(
     function (require) {
         require('er/tpl!./list.tpl');
         require('esui/Table');
+        require('esui/Button');
         require('esui/extension/Command');
 
         var MemberType = require('./config').MemberType;
@@ -64,16 +65,19 @@ define(
             if (e.name === 'remove') {
                 this.fire('removeClicked', {id: e.args});
             }
+            if (e.name === 'create') {
+                this.fire('createNewMember', {});
+            }
         }
 
         function MemberListView() {
             UIView.apply(this, arguments);
             this.uiEvents = {
-                'memberList:command': handleCommand.bind(this)
+                'memberList:command': handleCommand.bind(this),
             };
         }
 
-        MemberListView.prototype.template = 'memberList';
+        MemberListView.prototype.template = 'memberListPage';
 
         MemberListView.prototype.uiProperties = {
             memberList: {
@@ -85,6 +89,14 @@ define(
                 selectMode: 'line'
             }
         };
+
+        MemberListView.prototype.enterDocument = function () {
+            UIView.prototype.enterDocument.apply(this, arguments);
+            this.get('creatrButton').on(
+                'click', 
+                handleCommand.bind(this, {name: 'create'})
+            );
+        }
 
         require('er/util').inherits(MemberListView, UIView);
         return MemberListView;

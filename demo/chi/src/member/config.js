@@ -11,11 +11,13 @@ define(
             },
             {
                 path: '/member/create',
-                type: 'member/Form'
+                type: 'member/Form',
+                args: {formType: 'create'}
             },
             {
-                path: '/member/modify',
-                type: 'member/Form'
+                path: '/member/update',
+                type: 'member/Form',
+                args: {formType: 'update'}
             }
         ];
 

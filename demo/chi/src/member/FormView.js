@@ -21,6 +21,10 @@ define(
             this.fire('submitted', {data: memberData});
         }
 
+        function onCancelHandle() {
+            this.fire('canceled', {});
+        }
+
         function MemberFormView() {
             UIView.apply(this, arguments);
         }
@@ -31,6 +35,8 @@ define(
             UIView.prototype.enterDocument.apply(this, arguments);
             form = this.get('form');
             form.on('submit', onSubmitHandle.bind(this));
+            cancelButton = this.get('cancelButton');
+            cancelButton.on('click', onCancelHandle.bind(this));
         };
 
         require('er/util').inherits(MemberFormView, UIView);
