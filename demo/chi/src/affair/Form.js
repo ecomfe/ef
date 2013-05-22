@@ -6,6 +6,10 @@ define(
             Action.apply(this, arguments);
         }
 
+        function cancelSubmit() {
+            this.redirect('/affair/list');
+        }
+
         function submitAffair(e) {
             this.model.save(e.affair).then(saveCallBack.bind(this));
         }
@@ -25,6 +29,7 @@ define(
 
         AffairForm.prototype.initBehavior = function() {
             this.view.on('submit', require('er/util').bind(submitAffair, this));
+            this.view.on('cancel', require('er/util').bind(cancelSubmit, this));
         };
 
         require('er/util').inherits(AffairForm, Action);

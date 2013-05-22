@@ -24,12 +24,19 @@ define(
             this.fire('submit', {affair: data});
         }
 
+        function cancel() {
+            this.fire('cancel');
+        }
+
         AffairFormView.prototype.template = 'affairForm';
 
         AffairFormView.prototype.enterDocument = function() {
             UIView.prototype.enterDocument.apply(this, arguments);
             var form = this.get('form');
             form.on('submit', require('er/util').bind(submit, this));
+
+            var cancelButton = this.get('cancel-button');
+            cancelButton.on('click', require('er/util').bind(cancel, this))
         };
 
 
