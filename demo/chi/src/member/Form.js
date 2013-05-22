@@ -9,9 +9,9 @@ define(
         function submit() {
         }
 
-        MemberForm.prototype.modelType = require('./MemberFormModel');
+        MemberForm.prototype.modelType = require('./FormModel');
 
-        MemberForm.prototype.viewType = require('./MemberFormView');
+        MemberForm.prototype.viewType = require('./FormView');
 
         MemberForm.prototype.initBehavior = function() {
             //this.view.on('buy', require('er/util').bind(buyBook, this))

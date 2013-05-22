@@ -7,32 +7,22 @@ define(
             Model.apply(this, arguments);
 
             var url = this.get('url');
+            var config = require('./config');
             this.datasource = {
-                detail: datasource.constant(affair),
-                members: datasource.constant(members),
-                types: datasource.constant(types)
+                genderMap: datasource.constant(config.MemberType),
+                detail: datasource.remote(
+                    '/member/find', 
+                    {
+                        method: 'GET',
+                        data: {
+                            id: url.getQuery('id'),
+                        }
+                    }
+                )
             };
-            // this.datasource = {
-            //     detail: datasource.remote(
-            //         '/affair/read', 
-            //         {
-            //             method: 'GET',
-            //             data: {
-            //                 id: url.getQuery('id'),
-            //             }
-            //         }
-            //     )
-            //     members: datasource.remote(
-            //         '/member/list', 
-            //         {
-            //             method: 'GET',
-            //             data: {}
-            //         }
-            //     )
-            // };
-    }
+        }
 
-        require('er/util').inherits(AffairFormModel, Model);
-        return AffairFormModel;
+        require('er/util').inherits(MemberFormModel, Model);
+        return MemberFormModel;
     }
 );
