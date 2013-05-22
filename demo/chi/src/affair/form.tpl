@@ -2,6 +2,7 @@
 <form class="edit-form"
 data-ui-type="Form" data-ui-id="form" data-ui-submit-button="submit-button">
 	<div class="form-body">
+        <!-- if: ${formType} == 'update' -->
 	    <div class="form-row">
 	        <div class="form-key">当前余额：</div>
 	        <div class="form-value">
@@ -9,6 +10,7 @@ data-ui-type="Form" data-ui-id="form" data-ui-submit-button="submit-button">
 	        	data-ui-id="balance" data-ui-text="@detail.balance"></label>
 	        </div>
 	    </div>
+        <!-- /if -->
 	    <div class="form-row">
 	        <div class="form-key">啥时候：</div>
 	        <div class="form-value">

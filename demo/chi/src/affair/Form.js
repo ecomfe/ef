@@ -28,8 +28,8 @@ define(
         AffairForm.prototype.viewType = require('./FormView');
 
         AffairForm.prototype.initBehavior = function() {
-            this.view.on('submit', require('er/util').bind(submitAffair, this));
-            this.view.on('cancel', require('er/util').bind(cancelSubmit, this));
+            this.view.on('submit', submitAffair.bind(this));
+            this.view.on('cancel', cancelSubmit.bind(this));
         };
 
         require('er/util').inherits(AffairForm, Action);

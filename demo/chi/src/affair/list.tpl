@@ -1,6 +1,6 @@
 <!-- target: affairListPage -->
 	<div data-ui-type="Button" data-ui-id="createButton"
-	 data-ui-skin="spring">新建事件</div>
+	 data-ui-skin="spring">新建收支</div>
     <!-- import: affairList -->
 
 <!-- target: affairList -->

@@ -5,7 +5,7 @@ define(
         require('esui/Button');
         require('esui/extension/Command');
 
-        var MemberType = require('./config').MemberType;
+        var Gender = require('./config').Gender;
         var tableFields = [
             {
                 title: '成员',
@@ -22,7 +22,7 @@ define(
                 tip :'成员性别',
                 width: 50,
                 content: function (item) {
-                    return MemberType[item.gender];
+                    return Gender[item.gender];
                 }
             },
             {
@@ -47,8 +47,7 @@ define(
                 title: '操作',
                 width: 150,
                 content: function (item) {
-                    return '<span class="operation-modify" data-command="modify" data-command-args="'
-                        + item.id + '|' + item.name + '">编辑</span>'
+                    return '<a class="operation-modify" href="#/member/update~id=' + item.id + '">编辑</a>'
                         + ' | '
                         + '<span class ="operation-remove" data-command="remove" data-command-args="'
                         + item.id + '">删除</span>'

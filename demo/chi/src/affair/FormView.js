@@ -8,7 +8,7 @@ define(
         require('esui/Select');
         require('esui/Calendar');
         // css
-        require('css!./form.css');
+        require('css!./css/form.css');
 
         var AffairType = require('./config').AffairType;
 

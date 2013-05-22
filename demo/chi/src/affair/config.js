@@ -12,12 +12,12 @@ define(
             {
                 path: '/affair/create',
                 type: 'affair/Form',
-                args: {formType: 'create'}
+                args: { formType: 'create' }
             },
             {
                 path: '/affair/update',
                 type: 'affair/Form',
-                args: {formType: 'update'}
+                args: { formType: 'update' }
             }
         ];
 

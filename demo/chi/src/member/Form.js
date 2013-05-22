@@ -6,15 +6,13 @@ define(
             Action.apply(this, arguments);
         }
 
-        function submitHandle(e) {
-            this.model.submitData(e.data).then(saveCallBack.bind(this));
+        function submit(e) {
+            this.model
+                .saveOrUpdate(e.data)
+                .then(checkResponse.bind(this));
         }
 
-        function cancelHandle(e) {
-            this.redirect('/member/list');
-        }
-
-        function saveCallBack(response) {
+        function checkResponse(response) {
             if (response.success === true) {
                 this.redirect('/member/list');
             }
@@ -28,8 +26,8 @@ define(
         MemberForm.prototype.viewType = require('./FormView');
 
         MemberForm.prototype.initBehavior = function() {
-            this.view.on('submitted', submitHandle.bind(this));
-            this.view.on('canceled', cancelHandle.bind(this));
+            this.view.on('submit', submit.bind(this));
+            this.view.on('cancel', this.redirect.bind(this, '/member/list'));
         };
 
         require('er/util').inherits(MemberForm, Action);

@@ -8,21 +8,14 @@ define(
         require('esui/Calendar');
         require('esui/Crumb');
         // css
-        require('css!./common/css/form.css');
-
-        var MemberType = require('./config').MemberType;
-
+        require('css!./css/form.css');
 
         var UIView = require('ef/UIView');
 
         function onSubmitHandle() {
             var form = this.get('form');
             var memberData = form.getData();
-            this.fire('submitted', {data: memberData});
-        }
-
-        function onCancelHandle() {
-            this.fire('canceled', {});
+            this.fire('submit', { data: memberData });
         }
 
         function MemberFormView() {
@@ -36,7 +29,7 @@ define(
             form = this.get('form');
             form.on('submit', onSubmitHandle.bind(this));
             cancelButton = this.get('cancelButton');
-            cancelButton.on('click', onCancelHandle.bind(this));
+            cancelButton.on('click', this.fire.bind(this, 'cancel'));
         };
 
         require('er/util').inherits(MemberFormView, UIView);

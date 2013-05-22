@@ -51,28 +51,16 @@ define(
                 title: '操作',
                 width: 150,
                 content: function (item) {
-                    return '<span class="operation-modify" data-command="modify" data-command-args="'
-                        + item.id + '">编辑</span>'
+                    return '<a class="operation-modify" '
+                        + 'href="#/affair/update~id=' + item.id + '">编辑</a>';
                 }
             }
         ];
 
         var UIView = require('ef/UIView');
 
-        function handleCommand(e) {
-            if (e.name === 'modify') {
-                this.fire('modify', {id: e.args});
-            }
-            if (e.name === 'create') {
-                this.fire('create', {});
-            }
-        }
-
         function AffairListView() {
             UIView.apply(this, arguments);
-            this.uiEvents = {
-                'list:command': handleCommand.bind(this),
-            };
         }
 
         AffairListView.prototype.template = 'affairListPage';
@@ -92,7 +80,7 @@ define(
             UIView.prototype.enterDocument.apply(this, arguments);
             this.get('createButton').on(
                 'click', 
-                handleCommand.bind(this, {name: 'create'})
+                this.fire.bind(this, 'create')
             );
         }
 

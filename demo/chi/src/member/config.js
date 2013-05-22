@@ -12,12 +12,12 @@ define(
             {
                 path: '/member/create',
                 type: 'member/Form',
-                args: {formType: 'create'}
+                args: { formType: 'create' }
             },
             {
                 path: '/member/update',
                 type: 'member/Form',
-                args: {formType: 'update'}
+                args: { formType: 'update' }
             }
         ];
 
@@ -25,7 +25,12 @@ define(
         actions.forEach(controller.registerAction);
 
         var config = {};
-        config.MemberType = {
+
+        config.Gender = {
+            MALE: 0,
+            FEMALE: 1,
+            UNKNOWN: 2,
+
             0: '女',
             1: '男',
             2: '保密'
