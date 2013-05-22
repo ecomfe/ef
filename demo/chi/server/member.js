@@ -42,4 +42,11 @@ exports.find = function (req, res) {
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(member));
-}
+};
+
+exports.remove = function (req, res) {
+    var member = database.members({ id: +req.body.id }).remove();
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true }));
+};

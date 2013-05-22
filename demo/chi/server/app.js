@@ -34,6 +34,7 @@ app.get('/member/list', member.list);
 app.post('/member/save', member.save);
 app.post('/member/update', member.update);
 app.get('/member/find', member.find);
+app.post('/member/remove', member.remove);
 var affair = require('./affair');
 app.get('/affair/list', affair.list);
 app.post('/affair/save', affair.save);
