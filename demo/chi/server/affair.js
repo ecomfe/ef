@@ -3,10 +3,10 @@ var database = require('./database');
 function getAffair(context) {
     var member = database.members({ id: +context.member }).get()[0];
     var affair = {
-        id: context.id,
+        id: +context.id,
         time: context.time,
         member: {
-            id: context.member,
+            id: member.id,
             name: member.name
         },
         type: +context.type,

@@ -2,11 +2,10 @@ var database = require('./database');
 
 function getMember(context) {
     var member = {
-        id: context.id,
+        id: +context.id,
         name: context.name,
-        gender: context.gender,
-        birthday: context.birthday,
-        balance: 0
+        gender: +context.gender,
+        birthday: context.birthday
     };
 
     return member;
@@ -22,6 +21,7 @@ exports.list = function (req, res) {
 exports.save = function (req, res) {
     var id = database.members().count() + 1;
     var member = getMember(req.body);
+    member.balance = 0;
     member.id = id;
     database.members.insert(member);
 
