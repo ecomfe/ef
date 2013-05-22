@@ -38,7 +38,7 @@ define(
              * @return {string} YYYY-MM-dd格式的字符串
              */
             date: function (date) {
-                return date.getFullYears() + '-'
+                return date.getFullYear() + '-'
                     + pad(date.getMonth() + 1) + '-'
                     + pad(date.getDate());
             },
@@ -60,9 +60,9 @@ define(
              */
             time: function (time) {
                 return formatters.date(time) + ' '
-                    + pad(date.getHours()) + ':'
-                    + pad(date.getMinutes()) + ':'
-                    + pad(date.getSeconds());
+                    + pad(time.getHours()) + ':'
+                    + pad(time.getMinutes()) + ':'
+                    + pad(time.getSeconds());
             },
             /**
              * 格式化时间范围
