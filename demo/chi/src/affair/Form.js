@@ -7,7 +7,16 @@ define(
         }
 
         function submitAffair(e) {
-            this.model.save(e.affair);
+            this.model.save(e.affair).then(saveCallBack.bind(this));
+        }
+
+        function saveCallBack(response) {
+            if (response.success === true) {
+                this.redirect('/affair/list');
+            }
+            else {
+                alert('出错啦！');
+            }
         }
 
         AffairForm.prototype.modelType = require('./FormModel');

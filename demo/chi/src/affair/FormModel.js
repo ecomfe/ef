@@ -93,7 +93,8 @@ define(
             // 把这些数据set到model里面
             var postData = this.adaptAndFill(data);
             var ajax = require('er/ajax');
-            ajax.post('/affair/save', postData);
+            var me = this;
+            return ajax.post('/affair/save', postData);
         };
 
         AffairFormModel.prototype.formatters = {
