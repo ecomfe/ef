@@ -14,6 +14,8 @@ define(
             Panel.apply(this, arguments);
         }
 
+        ActionPanel.prototype.type = 'ActionPanel';
+
         /**
          * 设置HTML内容，`ActionPanel`没有这功能
          *
@@ -81,20 +83,19 @@ define(
 
         ActionPanel.prototype.repaint = helper.createRepaint(
             {
-                name: 'url',
+                name: ['url', 'actionOptions'],
                 paint: function (panel, value) {
                     disposeAction(panel);
 
                     var controller = require('er/controller');
-                    this.action = controller.renderChildAction(
+                    panel.action = controller.renderChildAction(
                         value, 
-                        this.main.id, 
-                        this.actionOptions
+                        panel.main.id, 
+                        actionOptions
                     );
-                    this.action.done(lib.curry(attachAction, this));
+                    panel.action.done(lib.curry(attachAction, panel));
                 }
             }
-            // TODO: `actionOptions`的变化也要有上面的逻辑，待painters合并功能完成
         );
 
         /**
