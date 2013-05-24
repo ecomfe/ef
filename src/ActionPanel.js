@@ -84,12 +84,12 @@ define(
         ActionPanel.prototype.repaint = helper.createRepaint(
             {
                 name: ['url', 'actionOptions'],
-                paint: function (panel, value) {
+                paint: function (panel, url, actionOptions) {
                     disposeAction(panel);
 
                     var controller = require('er/controller');
                     panel.action = controller.renderChildAction(
-                        value, 
+                        url, 
                         panel.main.id, 
                         actionOptions
                     );
