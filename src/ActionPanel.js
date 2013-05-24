@@ -82,6 +82,7 @@ define(
         }
 
         ActionPanel.prototype.repaint = helper.createRepaint(
+            Panel.prototype.repaint,
             {
                 name: ['url', 'actionOptions'],
                 paint: function (panel, url, actionOptions) {
