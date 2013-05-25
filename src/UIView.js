@@ -1,6 +1,7 @@
 define(
     function (require) {
         var View = require('er/View');
+        var util = require('er/util');
 
         /**
          * 与ESUI结合的`View`基类
@@ -59,8 +60,96 @@ define(
             return this.viewContext.get(id);
         };
 
+        /*
+         * 声明控件的事件。该属性有2种方式：
+         * 
+         * - 以`id:eventName`为键，以处理函数为值。
+         * - 以`id`为键，值为一个对象，对象中以`eventName`为键，处理函数为值。
+         * 
+         * 在此处声明的事件，运行时的`this`对象均是`View`实例，而非控件的实例。
+         * 
+         * 同时，在运行期，`UIView`会克隆该属性，将其中所有的处理函数都进行一次`bind`，
+         * 将`this`指向自身，因此运行时的`uiEvents`与类声明时的不会相同。
+         * 
+         * 如果需要解除某个事件的绑定，可以使用`.on('type', this.uiEvents.xxx)`进行。
+         *
+         * @type {Object}
+         * @public
+         */
+        UIView.prototype.uiEvents = null;
+
         /**
-         * 绑定控件的事件
+         * 声明控件的额外属性。
+         *
+         * 这个属性以控件的id为键，以一个对象为值。对象表示要额外附加到控件上的属性。
+         * 当控件实例化时，会把DOM中声明的属性与此处声明的合并在一起，此处声明的为优先。
+         *
+         * @type {Object}
+         * @public
+         */
+        UIView.prototype.uiProperties = null;
+
+        /**
+         * 深度克隆一个对象
+         *
+         * @param {*} source 待复制的对象
+         * @return {*}
+         * @inner
+         */
+        function clone(source) {
+            var type = Object.prototype.toString.call(source);
+
+            if (type === '[object Array]') {
+                var result = [];
+                for (var i = 0; i < source.length; i++) {
+                    result.push(clone(source[i]));
+                }
+                return result;
+            }
+            else if (type === '[object Object]') {
+                var result = {};
+                for (var key in source) {
+                    if (Object.prototype.hasOwnProperty.call(source, key)) {
+                        result[key] = clone(source[key]);
+                    }
+                }
+                return result;
+            }
+            else {
+                return source;
+            }
+        }
+
+        /**
+         * 给指定的控件绑定事件
+         *
+         * @param {UIView} view View对象实例
+         * @param {string} id 控件的id
+         * @param {string} eventName 事件名称
+         * @param {function | string} handler 事件处理函数，或者对应的方法名
+         * @return {function} 绑定到控件上的事件处理函数，不等于`handler`参数
+         * @inner
+         */
+        function bindEventToControl(view, id, eventName, handler) {
+            if (typeof handler === 'string') {
+                handler = view[handler];
+            }
+
+            if (typeof handler !== 'function') {
+                return handler;
+            }
+
+            handler = util.bind(handler, view);
+            var control = view.get(id);
+            if (control) {
+                control.on(eventName, handler);
+            }
+
+            return handler;
+        }
+
+        /**
+         * 绑定控件的事件。
          *
          * @override
          * @protected
@@ -70,33 +159,40 @@ define(
                 return;
             }
 
+            // 由于需要修改保存在`uiEvents`里的函数，所以必须克隆一份，
+            // 不然会影响到`prototype`上的内容导致错乱
+            this.uiEvents = clone(this.uiEvents);
+
             for (var key in this.uiEvents) {
-                if (this.uiEvents.hasOwnProperty(key)) {
-                    // 可以用`submit:click`的形式在指定控件上绑定指定类型的控件
-                    var segments = key.split(':');
-                    if (segments.length > 1) {
-                        var id = segments[0];
-                        var type = segments[1];
-                        var control = this.get(id);
-                        var handler = this.uiEvents[key];
-                        if (control) {
-                            control.on(type, handler);
-                        }
+                if (!this.uiEvents.hasOwnProperty(key)) {
+                    // 下面逻辑太长了，在这里先中断
+                    continue;
+                }
+
+                // 可以用`submit:click`的形式在指定控件上绑定指定类型的控件
+                var segments = key.split(':');
+                if (segments.length > 1) {
+                    var id = segments[0];
+                    var type = segments[1];
+                    var handler = this.uiEvents[key];
+                    // 为了还能用`xxx.un('click', this.uiEvents.xxx)`解除，
+                    // 因此这里要把值再设置回去
+                    this.uiEvents[key] = 
+                        bindEventToControl(this, id, type, handler);
+                }
+                // 也可以是一个控件的id，值是对象，里面每一项都是一个事件类型
+                else {
+                    var map = this.uiEvents[key];
+
+                    if (typeof map !== 'object') {
+                        return;
                     }
-                    // 也可以是一个控件的id，值是对象，里面每一项都是一个事件类型
-                    else {
-                        var map = this.uiEvents[key];
-                        var control = this.get(key);
-                        if (control && typeof map === 'object') {
-                            for (var type in map) {
-                                var handler = map[type];
-                                // 值也可以是个字符串，
-                                // 那么用当前实例上的对应属性作为处理函数
-                                if (typeof handler === 'string') {
-                                    handler = this[handler];
-                                }
-                                control.on(type, handler);
-                            }
+
+                    for (var type in map) {
+                        if (map.hasOwnProperty(type)) {
+                            var handler = map[type];
+                            map[type] =
+                                bindEventToControl(this, key, type, handler);
                         }
                     }
                 }

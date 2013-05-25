@@ -57,23 +57,8 @@ define(
 
         var UIView = require('ef/UIView');
 
-        function handleCommand(e) {
-            if (e.name === 'modify') {
-                this.fire('modifyClicked', {id: e.args});
-            }
-            if (e.name === 'remove') {
-                this.fire('removeClicked', {args: e.args});
-            }
-            if (e.name === 'create') {
-                this.fire('createNewMember', {});
-            }
-        }
-
         function MemberListView() {
             UIView.apply(this, arguments);
-            this.uiEvents = {
-                'memberList:command': handleCommand.bind(this),
-            };
         }
 
         MemberListView.prototype.template = 'memberListPage';
@@ -89,13 +74,20 @@ define(
             }
         };
 
-        MemberListView.prototype.enterDocument = function () {
-            UIView.prototype.enterDocument.apply(this, arguments);
-            this.get('creatrButton').on(
-                'click', 
-                handleCommand.bind(this, {name: 'create'})
-            );
-        }
+        MemberListView.prototype.uiEvents = {
+            'memberList:command': function (e) {
+                if (e.name === 'modify') {
+                    this.fire('modifyClicked', {id: e.args});
+                }
+                if (e.name === 'remove') {
+                    this.fire('removeClicked', {args: e.args});
+                }
+            },
+            
+            'createButton:click': function (e) {
+                this.fire('createNewMember');
+            }
+        };
 
         require('er/util').inherits(MemberListView, UIView);
         return MemberListView;
