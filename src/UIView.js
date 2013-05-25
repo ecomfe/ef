@@ -199,6 +199,55 @@ define(
             }
         };
 
+        var counter = 0x861005;
+        function getGUID() {
+            return 'ef-' + counter++;
+        }
+
+        /**
+         * 创建当前`UIView`使用的`ViewContext`对象
+         *
+         * @return {ViewContext}
+         * @public
+         */
+        UIView.prototype.createViewContext = function () {
+            var ViewContext = require('esui/ViewContext');
+            var name = this.name;
+
+            if (name) {
+                return new ViewContext(name);
+            }
+
+            // 从构造函数把名字猜出来
+            if (!name) {
+                name = this.constructor && this.constructor.name;
+            }
+            if (!name && this.constructor) {
+                // 用正则猜名字
+                var functionString = this.constructor.toString();
+                var match = /function\s+([^\(]*)/.exec(functionString);
+                name = match && match[1];
+            }
+            if (!name) {
+                name = getGUID();
+            }
+
+            // 以下代码是一个洁癖和强近症患者所写：
+
+            // 如果名字是XxxView，把最后的View字样去掉
+            name = name.replace(/View$/, '');
+            // 从PascalCase转为横线分隔
+            name = name.replace(
+                /[A-Z]/g, 
+                function (match) { return '-' + match.toLowerCase(); }
+            );
+            if (name.charAt(0) === '-') {
+                name = name.substring(1);
+            }
+
+            return new ViewContext(name);
+        };
+
         /**
          * 当容器渲染完毕后触发，用于控制元素可见性及绑定事件等DOM操作
          *
@@ -206,8 +255,7 @@ define(
          * @protected
          */
         UIView.prototype.enterDocument = function () {
-            var ViewContext = require('esui/ViewContext');
-            this.viewContext = new ViewContext();
+            this.viewContext = this.createViewContext();
 
             var container = document.getElementById(this.container);
             var options = {
