@@ -51,6 +51,10 @@
             }
         }
 
+需要注意的是，在此处声明的事件，运行时的`this`对象均是`View`实例，而非控件的实例。同时，在运行期，`UIView`会克隆该属性，将其中所有的处理函数都进行一次`bind`，将`this`指向自身，因此运行时的`uiEvents`与类声明时的不会相同。
+
+如果需要解除某个事件的绑定，可以使用`.on('type', this.uiEvents.xxx)`进行。
+
 ### {ViewContext} viewContext
 
 每一个`UIView`会创建一个单独的`ViewContext`，该视图的所有控件均存放在这个`ViewContext`中。
@@ -64,6 +68,10 @@
 ### {Control} get({string} id)
 
 该方法即`this.viewContext.get(id)`，用于返回当前视图下指定id的控件实例。
+
+### {ViewContext} createViewContext()
+
+创建当前`UIView`实例使用的`ViewContext`对象，默认实现是通过`this.name`或者当前构造函数的名字来创建一个`ViewContext`实例，可重写来创建一个`id`稳定的`ViewContext`对象。
 
 ## 其它
 
