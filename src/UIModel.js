@@ -126,13 +126,17 @@ define(
         /**
          * 根据传入的属性名获取一个组装后的对象
          *
-         * @param {string...} names 需要的属性名列表
+         * @param {Array.<string> | string...} names 需要的属性名列表
          * @return {Object} 包含`names`参数指定的属性的对象
          */
-        UIModel.prototype.getPart = function () {
+        UIModel.prototype.getPart = function (names) {
+            if (Object.prototype.toString.call(names) !== '[object Array]') {
+                names = [].slice.call(arguments);
+            }
+
             var part = {};
-            for (var i = 0; i < arguments.length; i++) {
-                var name = arguments[i];
+            for (var i = 0; i < names.length; i++) {
+                var name = names[i];
                 part[name] = this.get(name);
             }
             return part;
