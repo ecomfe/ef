@@ -54,6 +54,18 @@ define(
         }
 
         /**
+         * 通知子Action加载失败
+         *
+         * @param {ActionPanel} panel 控件实例
+         * @param {string} reason 失败原因
+         * @inner
+         */
+        function notifyActionLoadFailed(panel, reason) {
+            panel.action = null;
+            panel.fire('actionloadfail', { reason: reason });
+        }
+
+        /**
          * 销毁控件上关联的Action
          *
          * @param {ActionPanel} panel 控件实例
@@ -94,7 +106,10 @@ define(
                         panel.main.id, 
                         actionOptions
                     );
-                    panel.action.done(lib.curry(attachAction, panel));
+                    panel.action.then(
+                        lib.curry(attachAction, panel),
+                        lib.curry(notifyActionLoadFailed, panel)
+                    );
                 }
             }
         );
