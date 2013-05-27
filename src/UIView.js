@@ -60,6 +60,22 @@ define(
             return this.viewContext.get(id);
         };
 
+        /**
+         * 创建一个控件实例
+         *
+         * @param {string} type 控件的类型
+         * @param {Obejct=} options 创建控件时的选项
+         * @return {Control}
+         * @proceted
+         */
+        UIView.prototype.create = function (type, options) {
+            options = options || {};
+            if (!options.viewContext) {
+                options.viewContext = this.viewContext;
+            }
+            return require('esui').create(type, options);
+        };
+
         /*
          * 声明控件的事件。该属性有2种方式：
          * 
