@@ -85,9 +85,9 @@ define(
             ) {
                 action.cancel();
             }
-            // 已经加载完的Action，但并不一定会有`dispose`方法
-            else if (typeof action.dispose === 'function') {
-                action.dispose();
+            // 已经加载完的Action，但并不一定会有`leave`方法
+            else if (typeof action.leave === 'function') {
+                action.leave();
             }
 
             panel.action = null;
