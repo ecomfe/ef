@@ -19,6 +19,15 @@ define(
         ActionDialog.prototype.type = 'ActionDialog';
 
         /**
+         * 加载的Action的实例
+         *
+         * @type {er/Action|er/Promise}
+         * @public
+         * @readonly
+         */
+        ActionDialog.prototype.action = null;
+
+        /**
          * 设置HTML内容，`ActionDialog`没有这功能
          *
          * @public
@@ -32,8 +41,8 @@ define(
          * @param {string} type foot | body
          * @param {HTMLElement} mainDOM body或foot主元素
          *
-         * @return {ef.ActionPanel} panel
-         * @inner
+         * @return {ef.ActionPanel | esui.Panel} panel
+         * @protected
          */
         ActionDialog.prototype.createBF = function (type, mainDOM) {
             if (mainDOM) {
@@ -53,7 +62,21 @@ define(
                 url: this.url,
                 actionOptions: this.actionOptions
             };
-            var panel = ui.create('ActionPanel', properties);
+
+            var panelType = 'panel';
+            if (type == 'body') {
+                properties.url = this.url;
+                properties.actionOptions = this.actionOptions;
+                panelType = 'ActionPanel';
+            }
+            var panel = ui.create(panelType, properties);
+            if (type == 'body') {
+                var me = this;
+                panel.on('actionloaded', function() {
+                    me.action = this.action;''
+                    me.fire('actionloaded');
+                });
+            }
             panel.render();
             this.addChild(panel, type);
             return panel;
@@ -74,6 +97,14 @@ define(
                 }
             }
         );
+
+        /**
+         * 销毁控件
+         */
+        ActionDialog.prototype.dispose = function () {
+            this.action = null;
+            Dialog.prototype.dispose.apply(this, arguments);
+        };
 
         lib.inherits(ActionDialog, Dialog);
         require('esui').register(ActionDialog);
