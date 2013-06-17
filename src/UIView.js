@@ -76,6 +76,46 @@ define(
             return require('esui').create(type, options);
         };
 
+        /**
+         * 显示一条提示信息
+         *
+         * @param {string | Object} content 提示的内容或完整的配置项
+         * @param {string=} title 提示框的标题，如`content`提供配置项则无此参数
+         * @return {esui/Dialog}
+         * @protected
+         */
+        UIView.prototype.alert = function (content, title) {
+            var options = typeof content === 'string'
+                ? { title: title || document.title, content: content }
+                : util.extend({}, content);
+            if (!options.viewContext) {
+                options.viewContext = this.viewContext;
+            }
+
+            var Dialog = require('esui/Dialog');
+            return Dialog.alert(options);
+        };
+
+        /**
+         * 显示一条确认信息
+         *
+         * @param {string | Object} content 提示的内容或完整的配置项
+         * @param {string=} title 提示框的标题，如`content`提供配置项则无此参数
+         * @return {esui/Dialog}
+         * @protected
+         */
+        UIView.prototype.confirm = function (title, content) {
+            var options = typeof content === 'string'
+                ? { title: title || document.title, content: content }
+                : util.extend({}, content);
+            if (!options.viewContext) {
+                options.viewContext = this.viewContext;
+            }
+
+            var Dialog = require('esui/Dialog');
+            return Dialog.confirm(options);
+        };
+
         /*
          * 声明控件的事件。该属性有2种方式：
          * 
