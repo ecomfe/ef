@@ -104,7 +104,7 @@ define(
          * @return {esui/Dialog}
          * @protected
          */
-        UIView.prototype.confirm = function (title, content) {
+        UIView.prototype.confirm = function (content, title) {
             var options = typeof content === 'string'
                 ? { title: title || document.title, content: content }
                 : util.extend({}, content);
