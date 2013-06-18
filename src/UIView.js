@@ -37,7 +37,7 @@ define(
             var prefix = value.charAt(0);
             var actualValue = value.substring(1);
 
-            if (prefix === '@') {
+            if (prefix === '@' || prefix === '*') {
                 var path = actualValue.split('.');
                 var value = this.model.get(path[0]);
                 return path.length > 1
