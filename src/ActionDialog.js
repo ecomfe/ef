@@ -73,7 +73,7 @@ define(
             if (type == 'body') {
                 var me = this;
                 panel.on('actionloaded', function() {
-                    me.action = this.action;''
+                    me.action = this.action;
                     me.fire('actionloaded');
                 });
             }
