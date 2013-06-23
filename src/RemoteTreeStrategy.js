@@ -50,7 +50,7 @@ define(
             xhr.done(lib.bind(tree.expandNode, tree, node.id));
         }
 
-        RemoteTreeStrategy.prototype.attachTo = function (tree) {
+        RemoteTreeStrategy.prototype.enableToggleStrategy = function (tree) {
             tree.on(
                 'expand', 
                 lib.curry(expandNode, tree, this)
