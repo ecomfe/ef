@@ -79,11 +79,11 @@ define(
                 return;
             }
 
-            // Action正在加载，正确的`renderChildAction`得到的加载器有`cancel`方法
+            // Action正在加载，正确的`renderChildAction`得到的加载器有`abort`方法
             if (Deferred.isPromise(action) 
-                && typeof action.cancel === 'function'
+                && typeof action.abort === 'function'
             ) {
-                action.cancel();
+                action.abort();
             }
             // 已经加载完的Action，但并不一定会有`leave`方法
             else if (typeof action.leave === 'function') {
