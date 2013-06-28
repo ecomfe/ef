@@ -177,6 +177,18 @@ define(
             Panel.prototype.dispose.apply(this, arguments);
         };
 
+        /**
+         * 重新加载管理的子Action
+         *
+         * @param {Object=} actionOptions 子Action的额外数据
+         * @public
+         */
+        ActionPanel.prototype.reload = function (actionOptions) {
+            var url = this.url;
+            this.url = null;
+            this.setProperties({ url: url, actionOptions: actionOptions });
+        };
+
         lib.inherits(ActionPanel, Panel);
         require('esui').register(ActionPanel);
         return ActionPanel;
