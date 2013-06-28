@@ -101,12 +101,13 @@ define(
         ActionPanel.prototype.initStructure = function () {
             var localAttachAction = 
                 lib.curry(attachAction, this);
-            events.on('enteraction', localAttachAction);
+            events.on('enteractioncomplete', localAttachAction);
             var localNotifyActionLoadFailed 
                 = lib.curry(notifyActionLoadFailed, this);
             events.on('actionnotfound', localNotifyActionLoadFailed);
             events.on('permissiondenied', localNotifyActionLoadFailed);
             events.on('actionfail', localNotifyActionLoadFailed);
+            events.on('enteractionfail', localNotifyActionLoadFailed);
             var localNotifyActionLoadAborted
                 = lib.curry(notifyActionLoadAborted, this);
             events.on('actionabort', localNotifyActionLoadAborted);
@@ -114,8 +115,11 @@ define(
             this.on(
                 'beforedispose',
                 function () {
-                    events.un('enteraction', localAttachAction);
+                    events.un('enteractioncomplete', localAttachAction);
+                    events.un('actionnotfound', localNotifyActionLoadFailed);
+                    events.un('permissiondenied', localNotifyActionLoadFailed);
                     events.un('actionfail', localNotifyActionLoadFailed);
+                    events.un('enteractionfail', localNotifyActionLoadFailed);
                     events.un('actionabort', localNotifyActionLoadAborted);
                 }
             );
@@ -162,6 +166,14 @@ define(
                         panel.main.id, 
                         actionOptions
                     );
+
+                    // 如果发生错误，因为事件是同步触发的，
+                    // 因此先执行`notifyActionLoadFailed`再赋值，导致没清掉。
+                    // 错误时返回的`Promise`对象是没有`abort`方法的，
+                    // 这种对象我们也不需要，因此直接清掉
+                    if (typeof panel.action.abort !== 'function') {
+                        panel.action = null;
+                    }
                 }
             }
         );
