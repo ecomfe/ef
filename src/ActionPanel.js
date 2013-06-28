@@ -3,6 +3,7 @@ define(
         var Panel = require('esui/Panel');
         var lib = require('esui/lib');
         var helper = require('esui/controlHelper');
+        var events = require('er/events');
 
         /**
          * 用于加载子Action的面板控件
@@ -48,8 +49,12 @@ define(
          * @param {er/Action} action Action实例
          * @inner
          */
-        function attachAction(panel, action) {
-            panel.action = action;
+        function attachAction(panel, e) {
+            if (!e.isChildAction || e.container !== panel.main.id) {
+                return;
+            }
+            
+            panel.action = e.action;
             panel.fire('actionloaded');
         }
 
@@ -60,10 +65,61 @@ define(
          * @param {string} reason 失败原因
          * @inner
          */
-        function notifyActionLoadFailed(panel, reason) {
+        function notifyActionLoadFailed(panel, e) {
+            if (!e.isChildAction || e.container !== panel.main.id) {
+                return;
+            }
+            
             panel.action = null;
-            panel.fire('actionloadfail', { reason: reason });
+            panel.fire(
+                'actionloadfail', 
+                { failType: e.failType, reason: e.reason }
+            );
         }
+
+        /**
+         * 通知子Action加载中断
+         *
+         * @param {ActionPanel} panel 控件实例
+         * @param {string} reason 失败原因
+         * @inner
+         */
+        function notifyActionLoadAborted(panel, e) {
+            if (!e.isChildAction || e.container !== panel.main.id) {
+                return;
+            }
+            
+            panel.fire('actionloadabort');
+        }
+
+        /**
+         * 初始化结构
+         *
+         * @override
+         * @protected
+         */
+        ActionPanel.prototype.initStructure = function () {
+            var localAttachAction = 
+                lib.curry(attachAction, this);
+            events.on('enteraction', localAttachAction);
+            var localNotifyActionLoadFailed 
+                = lib.curry(notifyActionLoadFailed, this);
+            events.on('actionnotfound', localNotifyActionLoadFailed);
+            events.on('permissiondenied', localNotifyActionLoadFailed);
+            events.on('actionfail', localNotifyActionLoadFailed);
+            var localNotifyActionLoadAborted
+                = lib.curry(notifyActionLoadAborted, this);
+            events.on('actionabort', localNotifyActionLoadAborted);
+
+            this.on(
+                'beforedispose',
+                function () {
+                    events.un('enteraction', localAttachAction);
+                    events.un('actionfail', localNotifyActionLoadFailed);
+                    events.un('actionabort', localNotifyActionLoadAborted);
+                }
+            );
+        };
 
         /**
          * 销毁控件上关联的Action
@@ -105,10 +161,6 @@ define(
                         url, 
                         panel.main.id, 
                         actionOptions
-                    );
-                    panel.action.then(
-                        lib.curry(attachAction, panel),
-                        lib.curry(notifyActionLoadFailed, panel)
                     );
                 }
             }
