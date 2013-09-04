@@ -61,6 +61,17 @@ define(
         };
 
         /**
+         * 根据name获取当前视图下的控件组
+         *
+         * @param {string} name 控件组的名称
+         * @return {ControlGroup} 对应的控件组
+         * @protected
+         */
+        UIView.prototype.getGroup = function (name) {
+            return this.viewContext.getGroup(name);
+        };
+
+        /**
          * 创建一个控件实例
          *
          * @param {string} type 控件的类型
