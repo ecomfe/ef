@@ -127,6 +127,40 @@ define(
             return Dialog.confirm(options);
         };
 
+        /**
+         * 显示ActionDialog
+         *
+         * @param {string | Object} content 提示的内容或完整的配置项
+         * @param {string=} title 提示框的标题，如`content`提供配置项则无此参数
+         * @return {esui/Dialog}
+         * @protected
+         */
+        UIView.prototype.popActionDialog = function (url, title) {
+            var options = typeof url === 'string'
+                ? { title: title || document.title, url: url }
+                : util.mix({}, url);
+            //创建main
+            var main = document.createElement('div');
+            document.body.appendChild(main);
+            options = util.mix({ 
+                width: 600,
+                needFoot: false,
+                draggable: true,
+                closeOnHide: false,
+                main: main
+            }, options);
+            if (!options.viewContext) {
+                options.viewContext = this.viewContext;
+            }
+            require('ef/ActionDialog');
+            var ui = require('esui/main');
+            var dialog = ui.create('ActionDialog', options);
+
+            dialog.render();
+            dialog.show();
+            return dialog;
+        };
+
         /*
          * 声明控件的事件。该属性有2种方式：
          * 

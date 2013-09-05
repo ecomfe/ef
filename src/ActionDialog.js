@@ -17,6 +17,7 @@ define(
         }
 
         ActionDialog.prototype.type = 'ActionDialog';
+        ActionDialog.prototype.styleType = 'Dialog';
 
         /**
          * 设置HTML内容，`ActionDialog`没有这功能
