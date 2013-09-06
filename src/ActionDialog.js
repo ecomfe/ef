@@ -50,12 +50,10 @@ define(
                 helper.getPartClasses(this, type + '-panel')
             );
             var properties = {
-                main: mainDOM,
-                url: this.url,
-                actionOptions: this.actionOptions
+                main: mainDOM
             };
 
-            var panelType = 'panel';
+            var panelType = 'Panel';
             if (type == 'body') {
                 properties.url = this.url;
                 properties.actionOptions = this.actionOptions;
