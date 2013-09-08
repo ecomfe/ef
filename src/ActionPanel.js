@@ -160,6 +160,10 @@ define(
                 paint: function (panel, url, actionOptions) {
                     disposeAction(panel);
 
+                    if (!url) {
+                        return;
+                    }
+
                     var controller = require('er/controller');
                     panel.action = controller.renderChildAction(
                         url, 
