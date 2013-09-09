@@ -164,6 +164,10 @@ define(
                         return;
                     }
 
+                    if (panel.lazy && helper.isInStage(panel, 'INITED')) {
+                        return;
+                    }
+
                     var controller = require('er/controller');
                     panel.action = controller.renderChildAction(
                         url, 
