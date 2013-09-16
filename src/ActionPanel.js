@@ -128,12 +128,11 @@ define(
         /**
          * 销毁控件上关联的Action
          *
-         * @param {ActionPanel} panel 控件实例
          * @inner
          */
-        function disposeAction(panel) {
+        ActionPanel.prototype.disposeAction = function () {
             var Deferred = require('er/Deferred');
-            var action = panel.action;
+            var action = this.action;
 
             if (!action) {
                 return;
@@ -150,7 +149,7 @@ define(
                 action.leave();
             }
 
-            panel.action = null;
+            this.action = null;
         }
 
         ActionPanel.prototype.repaint = helper.createRepaint(
@@ -158,7 +157,7 @@ define(
             {
                 name: ['url', 'actionOptions'],
                 paint: function (panel, url, actionOptions) {
-                    disposeAction(panel);
+                    panel.disposeAction();
 
                     if (!url) {
                         return;
@@ -193,7 +192,7 @@ define(
          * @public
          */
         ActionPanel.prototype.dispose = function () {
-            disposeAction(this);
+            this.disposeAction();
             Panel.prototype.dispose.apply(this, arguments);
         };
 
