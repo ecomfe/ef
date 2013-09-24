@@ -63,6 +63,14 @@ define(
             if (type == 'body') {
                 var me = this;
                 panel.on('actionloaded', function() {
+                    me.resize();
+                    var action = me.getAction();
+                    action.on(
+                        'handlefinish',
+                        function () {
+                            me.dispose();
+                        }
+                    );
                     me.fire('actionloaded');
                 });
                 panel.on('actionloadfail', function() {
