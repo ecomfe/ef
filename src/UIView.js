@@ -146,7 +146,7 @@ define(
                 width: 600,
                 needFoot: false,
                 draggable: true,
-                closeOnHide: false,
+                closeOnHide: true,
                 main: main
             }, options);
             if (!options.viewContext) {
