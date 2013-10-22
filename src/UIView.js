@@ -130,15 +130,11 @@ define(
         /**
          * 显示ActionDialog
          *
-         * @param {string | Object} content 提示的内容或完整的配置项
-         * @param {string=} title 提示框的标题，如`content`提供配置项则无此参数
+         * @param {Object} options 参数
          * @return {esui/Dialog}
          * @protected
          */
-        UIView.prototype.popActionDialog = function (url, title) {
-            var options = typeof url === 'string'
-                ? { title: title || document.title, url: url }
-                : util.mix({}, url);
+        UIView.prototype.popActionDialog = function (options) {
             //创建main
             var main = document.createElement('div');
             document.body.appendChild(main);
@@ -147,6 +143,7 @@ define(
                 needFoot: false,
                 draggable: true,
                 closeOnHide: true,
+                autoClose: true,
                 main: main
             }, options);
             if (!options.viewContext) {

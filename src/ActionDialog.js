@@ -65,12 +65,14 @@ define(
                 panel.on('actionloaded', function() {
                     me.resize();
                     var action = me.getAction();
-                    action.on(
-                        'handlefinish',
-                        function () {
-                            me.dispose();
-                        }
-                    );
+                    if (me.autoClose) {
+                        action.on(
+                            'handlefinish',
+                            function () {
+                                me.dispose();
+                            }
+                        );
+                    }
                     me.fire('actionloaded');
                 });
                 panel.on('actionloadfail', function() {
