@@ -334,7 +334,18 @@ define(
 
             // 如果名字是XxxView，把最后的View字样去掉
             name = name.replace(/View$/, '');
-            // 从PascalCase转为横线分隔
+            // 从PascalCase转为横线分隔，这里需要注意，连续的大写字母不应该连续分隔
+            name = name.replace(
+                /[A-Z]{2,}/g,
+                function (match) {
+                    // 这里把ABCD这种连续的大写，转成AbcD这种形式。
+                    // 如果`encodeURIComponent`，会变成`encodeUriComponent`，
+                    // 然后加横线后就是`encode-uri-component`得到正确的结果
+                    return match.charAt(0)
+                        + match.slice(1, -1).toLowerCase()
+                        + match.charAt(match.length - 1);
+                }
+            );
             name = name.replace(
                 /[A-Z]/g, 
                 function (match) { return '-' + match.toLowerCase(); }
