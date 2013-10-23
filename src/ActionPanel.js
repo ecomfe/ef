@@ -150,7 +150,7 @@ define(
             }
 
             this.action = null;
-        }
+        };
 
         ActionPanel.prototype.repaint = helper.createRepaint(
             Panel.prototype.repaint,
