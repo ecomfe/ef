@@ -324,7 +324,8 @@ define(
                 // 用正则猜名字
                 var functionString = this.constructor.toString();
                 var match = /function\s+([^\(]*)/.exec(functionString);
-                name = match && match[1];
+                // 去除函数名后面的空格
+                name = match && match[1].replace(/\s+$/g, '');
             }
             if (!name) {
                 name = getGUID();
