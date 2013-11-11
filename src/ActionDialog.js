@@ -17,15 +17,7 @@ define(
         }
 
         ActionDialog.prototype.type = 'ActionDialog';
-
-        /**
-         * 加载的Action的实例
-         *
-         * @type {er/Action|er/Promise}
-         * @public
-         * @readonly
-         */
-        ActionDialog.prototype.action = null;
+        ActionDialog.prototype.styleType = 'Dialog';
 
         /**
          * 设置HTML内容，`ActionDialog`没有这功能
@@ -58,12 +50,10 @@ define(
                 helper.getPartClasses(this, type + '-panel')
             );
             var properties = {
-                main: mainDOM,
-                url: this.url,
-                actionOptions: this.actionOptions
+                main: mainDOM
             };
 
-            var panelType = 'panel';
+            var panelType = 'Panel';
             if (type == 'body') {
                 properties.url = this.url;
                 properties.actionOptions = this.actionOptions;
@@ -73,8 +63,23 @@ define(
             if (type == 'body') {
                 var me = this;
                 panel.on('actionloaded', function() {
-                    me.action = this.action;
+                    me.resize();
+                    var action = me.getAction();
+                    if (me.autoClose) {
+                        action.on(
+                            'handlefinish',
+                            function () {
+                                me.dispose();
+                            }
+                        );
+                    }
                     me.fire('actionloaded');
+                });
+                panel.on('actionloadfail', function() {
+                    me.fire('actionloadfail');
+                });
+                panel.on('actionloadabort', function() {
+                    me.fire('actionloadabort');
                 });
             }
             panel.render();
@@ -99,12 +104,35 @@ define(
         );
 
         /**
+         * 获取action
+         */
+        ActionDialog.prototype.getAction = function () {
+            var actionPanel = this.getBody();
+            if (actionPanel) {
+                return actionPanel.get('action');
+            }
+        };
+
+
+        /**
+         * 重新加载管理的子Action(代理Panel的)
+         */
+        ActionDialog.prototype.reload = function () {
+            var actionPanel = this.getBody();
+            if (actionPanel) {
+                actionPanel.reload();
+            }
+        };
+
+        /**
          * 销毁控件
          */
         ActionDialog.prototype.dispose = function () {
-            this.action = null;
             Dialog.prototype.dispose.apply(this, arguments);
         };
+
+
+
 
         lib.inherits(ActionDialog, Dialog);
         require('esui').register(ActionDialog);

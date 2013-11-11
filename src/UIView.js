@@ -61,6 +61,17 @@ define(
         };
 
         /**
+         * 根据name获取当前视图下的控件组
+         *
+         * @param {string} name 控件组的名称
+         * @return {ControlGroup} 对应的控件组
+         * @protected
+         */
+        UIView.prototype.getGroup = function (name) {
+            return this.viewContext.getGroup(name);
+        };
+
+        /**
          * 创建一个控件实例
          *
          * @param {string} type 控件的类型
@@ -107,13 +118,44 @@ define(
         UIView.prototype.confirm = function (content, title) {
             var options = typeof content === 'string'
                 ? { title: title || document.title, content: content }
-                : util.extend({}, content);
+                : util.mix({}, content);
             if (!options.viewContext) {
                 options.viewContext = this.viewContext;
             }
 
             var Dialog = require('esui/Dialog');
             return Dialog.confirm(options);
+        };
+
+        /**
+         * 显示ActionDialog
+         *
+         * @param {Object} options 参数
+         * @return {esui/Dialog}
+         * @protected
+         */
+        UIView.prototype.popActionDialog = function (options) {
+            //创建main
+            var main = document.createElement('div');
+            document.body.appendChild(main);
+            options = util.mix({ 
+                width: 600,
+                needFoot: false,
+                draggable: true,
+                closeOnHide: true,
+                autoClose: true,
+                main: main
+            }, options);
+            if (!options.viewContext) {
+                options.viewContext = this.viewContext;
+            }
+            require('ef/ActionDialog');
+            var ui = require('esui/main');
+            var dialog = ui.create('ActionDialog', options);
+
+            dialog.render();
+            dialog.show();
+            return dialog;
         };
 
         /*
@@ -282,7 +324,8 @@ define(
                 // 用正则猜名字
                 var functionString = this.constructor.toString();
                 var match = /function\s+([^\(]*)/.exec(functionString);
-                name = match && match[1];
+                // 去除函数名后面的空格
+                name = match && match[1].replace(/\s+$/g, '');
             }
             if (!name) {
                 name = getGUID();
@@ -292,7 +335,18 @@ define(
 
             // 如果名字是XxxView，把最后的View字样去掉
             name = name.replace(/View$/, '');
-            // 从PascalCase转为横线分隔
+            // 从PascalCase转为横线分隔，这里需要注意，连续的大写字母不应该连续分隔
+            name = name.replace(
+                /[A-Z]{2,}/g,
+                function (match) {
+                    // 这里把ABCD这种连续的大写，转成AbcD这种形式。
+                    // 如果`encodeURIComponent`，会变成`encodeUriComponent`，
+                    // 然后加横线后就是`encode-uri-component`得到正确的结果
+                    return match.charAt(0)
+                        + match.slice(1, -1).toLowerCase()
+                        + match.charAt(match.length - 1);
+                }
+            );
             name = name.replace(
                 /[A-Z]/g, 
                 function (match) { return '-' + match.toLowerCase(); }
