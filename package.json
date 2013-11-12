@@ -6,7 +6,7 @@
     ],
     "dependencies": {
         "er": "3.1.x",
-        "esui": "3.0.x"
+        "esui": "3.1.x"
     },
     "main": "main",
     "description": "EF是ER与ESUI整合而成的高效率业务系统开发框架。",
