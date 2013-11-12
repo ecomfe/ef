@@ -176,6 +176,16 @@ define(
          */
         UIView.prototype.uiEvents = null;
 
+        /*
+         * 获取当前视图关联的控件事件声明。参考`uiEvents`属性
+         *
+         * @return {Object}
+         * @public
+         */
+        UIView.prototype.getUIEvents = function () {
+            return this.uiEvents || {};
+        };
+
         /**
          * 声明控件的额外属性。
          *
@@ -186,6 +196,15 @@ define(
          * @public
          */
         UIView.prototype.uiProperties = null;
+
+        /**
+         * 声明当前视图关联的控件的额外属性，参考`uiProperties`属性
+         *
+         * @return {Object}
+         */
+        UIView.prototype.getUIProperties = function () {
+            return this.uiProperties;
+        };
 
         /**
          * 深度克隆一个对象
@@ -253,16 +272,17 @@ define(
          * @protected
          */
         UIView.prototype.bindEvents = function () {
-            if (!this.uiEvents) {
+            var events = this.getUIEvents();
+            if (!events) {
                 return;
             }
 
             // 由于需要修改保存在`uiEvents`里的函数，所以必须克隆一份，
             // 不然会影响到`prototype`上的内容导致错乱
-            this.uiEvents = clone(this.uiEvents);
+            events = clone(events);
 
-            for (var key in this.uiEvents) {
-                if (!this.uiEvents.hasOwnProperty(key)) {
+            for (var key in events) {
+                if (!events.hasOwnProperty(key)) {
                     // 下面逻辑太长了，在这里先中断
                     continue;
                 }
@@ -272,15 +292,15 @@ define(
                 if (segments.length > 1) {
                     var id = segments[0];
                     var type = segments[1];
-                    var handler = this.uiEvents[key];
-                    // 为了还能用`xxx.un('click', this.uiEvents.xxx)`解除，
+                    var handler = events[key];
+                    // 为了还能用`xxx.un('click', events.xxx)`解除，
                     // 因此这里要把值再设置回去
-                    this.uiEvents[key] = 
+                    events[key] = 
                         bindEventToControl(this, id, type, handler);
                 }
                 // 也可以是一个控件的id，值是对象，里面每一项都是一个事件类型
                 else {
-                    var map = this.uiEvents[key];
+                    var map = events[key];
 
                     if (typeof map !== 'object') {
                         return;
@@ -295,6 +315,8 @@ define(
                     }
                 }
             }
+
+            this.uiEvents = events;
         };
 
         var counter = 0x861005;
@@ -303,23 +325,18 @@ define(
         }
 
         /**
-         * 创建当前`UIView`使用的`ViewContext`对象
+         * 获取当前视图的名称，通常用于生成`ViewContext`
          *
-         * @return {ViewContext}
-         * @public
+         * @return {string}
+         * @protected
          */
-        UIView.prototype.createViewContext = function () {
-            var ViewContext = require('esui/ViewContext');
-            var name = this.name;
-
-            if (name) {
-                return new ViewContext(name);
+        UIView.prototype.getViewName = function () {
+            if (this.name) {
+                return this.name;
             }
 
             // 从构造函数把名字猜出来
-            if (!name) {
-                name = this.constructor && this.constructor.name;
-            }
+            var name = this.constructor && this.constructor.name;
             if (!name && this.constructor) {
                 // 用正则猜名字
                 var functionString = this.constructor.toString();
@@ -327,6 +344,7 @@ define(
                 // 去除函数名后面的空格
                 name = match && match[1].replace(/\s+$/g, '');
             }
+            // 再不行用计数
             if (!name) {
                 name = getGUID();
             }
@@ -355,7 +373,20 @@ define(
                 name = name.substring(1);
             }
 
-            return new ViewContext(name);
+            return name;
+        };
+
+        /**
+         * 创建当前`UIView`使用的`ViewContext`对象
+         *
+         * @return {ViewContext}
+         * @public
+         */
+        UIView.prototype.createViewContext = function () {
+            var ViewContext = require('esui/ViewContext');
+            var name = this.getViewName();
+
+            return new ViewContext(name || null);
         };
 
         /**
@@ -370,7 +401,7 @@ define(
             var container = document.getElementById(this.container);
             var options = {
                 viewContext: this.viewContext,
-                properties: this.uiProperties,
+                properties: this.getUIProperties(),
                 valueReplacer: require('er/util').bind(this.replaceValue, this)
             };
             require('esui').init(container, options);
