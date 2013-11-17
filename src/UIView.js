@@ -207,37 +207,6 @@ define(
         };
 
         /**
-         * 深度克隆一个对象
-         *
-         * @param {*} source 待复制的对象
-         * @return {*}
-         * @inner
-         */
-        function clone(source) {
-            var type = Object.prototype.toString.call(source);
-
-            if (type === '[object Array]') {
-                var result = [];
-                for (var i = 0; i < source.length; i++) {
-                    result.push(clone(source[i]));
-                }
-                return result;
-            }
-            else if (type === '[object Object]') {
-                var result = {};
-                for (var key in source) {
-                    if (Object.prototype.hasOwnProperty.call(source, key)) {
-                        result[key] = clone(source[key]);
-                    }
-                }
-                return result;
-            }
-            else {
-                return source;
-            }
-        }
-
-        /**
          * 给指定的控件绑定事件
          *
          * @param {UIView} view View对象实例
@@ -252,14 +221,14 @@ define(
                 handler = view[handler];
             }
 
+            // TODO: mini-event后续会支持`false`作为处理函数，要考虑下
             if (typeof handler !== 'function') {
                 return handler;
             }
 
-            handler = util.bind(handler, view);
             var control = view.get(id);
             if (control) {
-                control.on(eventName, handler);
+                control.on(eventName, handler, control);
             }
 
             return handler;
@@ -277,10 +246,6 @@ define(
                 return;
             }
 
-            // 由于需要修改保存在`uiEvents`里的函数，所以必须克隆一份，
-            // 不然会影响到`prototype`上的内容导致错乱
-            events = clone(events);
-
             for (var key in events) {
                 if (!events.hasOwnProperty(key)) {
                     // 下面逻辑太长了，在这里先中断
@@ -293,10 +258,7 @@ define(
                     var id = segments[0];
                     var type = segments[1];
                     var handler = events[key];
-                    // 为了还能用`xxx.un('click', events.xxx)`解除，
-                    // 因此这里要把值再设置回去
-                    events[key] = 
-                        bindEventToControl(this, id, type, handler);
+                    bindEventToControl(this, id, type, handler);
                 }
                 // 也可以是一个控件的id，值是对象，里面每一项都是一个事件类型
                 else {
@@ -309,14 +271,11 @@ define(
                     for (var type in map) {
                         if (map.hasOwnProperty(type)) {
                             var handler = map[type];
-                            map[type] =
-                                bindEventToControl(this, key, type, handler);
+                            bindEventToControl(this, key, type, handler);
                         }
                     }
                 }
             }
-
-            this.uiEvents = events;
         };
 
         var counter = 0x861005;
