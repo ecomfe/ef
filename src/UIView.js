@@ -1,7 +1,9 @@
 define(
     function (require) {
         var View = require('er/View');
-        var util = require('er/util');
+        var u = require('underscore');
+        
+        require('ef/ActionDialog');
 
         /**
          * 与ESUI结合的`View`基类
@@ -98,7 +100,7 @@ define(
         UIView.prototype.alert = function (content, title) {
             var options = typeof content === 'string'
                 ? { title: title || document.title, content: content }
-                : util.extend({}, content);
+                : u.clone(content);
             if (!options.viewContext) {
                 options.viewContext = this.viewContext;
             }
@@ -118,7 +120,7 @@ define(
         UIView.prototype.confirm = function (content, title) {
             var options = typeof content === 'string'
                 ? { title: title || document.title, content: content }
-                : util.mix({}, content);
+                : u.clone(content);
             if (!options.viewContext) {
                 options.viewContext = this.viewContext;
             }
@@ -138,18 +140,18 @@ define(
             //创建main
             var main = document.createElement('div');
             document.body.appendChild(main);
-            options = util.mix({ 
+
+            var defaults = {
                 width: 600,
                 needFoot: false,
                 draggable: true,
                 closeOnHide: true,
                 autoClose: true,
-                main: main
-            }, options);
-            if (!options.viewContext) {
-                options.viewContext = this.viewContext;
-            }
-            require('ef/ActionDialog');
+                main: main,
+                viewContext: this.viewContext
+            };
+            options = u.defaults({}, options, defaults);
+
             var ui = require('esui/main');
             var dialog = ui.create('ActionDialog', options);
 
@@ -361,7 +363,7 @@ define(
             var options = {
                 viewContext: this.viewContext,
                 properties: this.getUIProperties(),
-                valueReplacer: require('er/util').bind(this.replaceValue, this)
+                valueReplacer: u.bind(this.replaceValue, this)
             };
             require('esui').init(container, options);
 
