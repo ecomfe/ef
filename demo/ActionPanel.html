@@ -65,6 +65,14 @@
                         console.log('abort', this.action);
                     }
                 );
+                panel.on(
+                    'action@test', 
+                    function (e) {
+                        console.log('test', e);
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                );
                 panel.repaint([{ name: 'url' }], { url: { name: 'url' } });
                 panel.set('url', '/abc');
             }

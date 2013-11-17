@@ -38,6 +38,18 @@ define(
         ActionPanel.prototype.action = null;
 
         /**
+         * 代理子Action的事件
+         *
+         * @param {Object} e 事件对象
+         */
+        function delegateActionEvent(e) {
+            var event = require('mini-event').fromEvent(
+                e, { preserveData: true, syncState: true });
+            event.type = 'action@' + e.type;
+            this.fire(event);
+        }
+
+        /**
          * 把已经加载的子Action赋值到控件上
          *
          * @param {Object} e 事件对象
@@ -48,6 +60,12 @@ define(
             }
             
             this.action = e.action;
+
+            // 代理所有的子Action的事件
+            if (typeof this.action.on === 'function') {
+                this.action.on('*', delegateActionEvent, this);
+            }
+
             this.fire('actionloaded');
         }
 
@@ -116,10 +134,15 @@ define(
             ) {
                 action.abort();
             }
-            // 已经加载完的Action，但并不一定会有`leave`方法
-            else if (typeof action.leave === 'function') {
-                action.leave();
-            }
+            // 已经加载完的Action，但并不一定会有`leave`或`un`方法
+            else {
+                if (typeof action.un === 'function') {
+                    action.un('*', delegateActionEvent, this);
+                }
+                if (typeof action.leave === 'function') {
+                    action.leave();
+                }  
+            } 
 
             this.action = null;
         };
