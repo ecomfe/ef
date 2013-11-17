@@ -1,10 +1,10 @@
 define(
     function (require) {
-        require('ef/ActionPanel');
         var Dialog = require('esui/Dialog');
         var lib = require('esui/lib');
-        var helper = require('esui/controlHelper');
         var ui = require('esui/main');
+
+        require('ef/ActionPanel');
 
         /**
          * 用于加载子Action的面板控件
@@ -21,8 +21,6 @@ define(
 
         /**
          * 设置HTML内容，`ActionDialog`没有这功能
-         *
-         * @public
          */
         ActionDialog.prototype.setContent = function () {
         };
@@ -30,7 +28,7 @@ define(
         /**
          * 构建对话框主内容和底部内容
          *
-         * @param {string} type foot | body
+         * @param {"foot" | "body"} type 面板类型
          * @param {HTMLElement} mainDOM body或foot主元素
          *
          * @return {ef.ActionPanel | esui.Panel} panel
@@ -45,49 +43,55 @@ define(
                 this.main.appendChild(mainDOM);
             }
 
-            lib.addClasses(
-                mainDOM,
-                helper.getPartClasses(this, type + '-panel')
-            );
+            this.helper.addPartClasses(type + '-panel', mainDOM);
             var properties = {
                 main: mainDOM
             };
 
             var panelType = 'Panel';
-            if (type == 'body') {
+            if (type === 'body') {
                 properties.url = this.url;
                 properties.actionOptions = this.actionOptions;
                 panelType = 'ActionPanel';
             }
+
             var panel = ui.create(panelType, properties);
-            if (type == 'body') {
-                var me = this;
-                panel.on('actionloaded', function() {
-                    me.resize();
-                    var action = me.getAction();
-                    if (me.autoClose) {
-                        action.on(
-                            'handlefinish',
-                            function () {
-                                me.dispose();
-                            }
-                        );
-                    }
-                    me.fire('actionloaded');
-                });
-                panel.on('actionloadfail', function() {
-                    me.fire('actionloadfail');
-                });
-                panel.on('actionloadabort', function() {
-                    me.fire('actionloadabort');
-                });
+            if (type === 'body') {
+                panel.on(
+                    'actionloaded',
+                    function () {
+                        this.resize();
+
+                        if (this.autoClose) {
+                            // 当子Action处理完成后对话框也一起销毁
+                            var action = this.get('action');
+                            action.on('handlefinish', this.dispose, this);
+                        }
+
+                        this.fire('actionloaded');
+                    },
+                    this
+                );
+
+                // 代理`ActionPanel`的相关事件
+                var Event = require('mini-event');
+                Event.delegate(panel, this, 'actionloadfail');
+                Event.delegate(panel, this, 'actionloadabort');
             }
+
             panel.render();
             this.addChild(panel, type);
+
             return panel;
         };
 
-
+        var helper = require('esui/controlHelper');
+        /**
+         * 重构
+         *
+         * @protected
+         * @override
+         */
         ActionDialog.prototype.repaint = helper.createRepaint(
             Dialog.prototype.repaint,
             {
@@ -95,21 +99,27 @@ define(
                 paint: function (dialog, url, actionOptions) {
                     // 获取body panel
                     var body = dialog.getBody();
-                    body.setProperties({
+                    var properties = {
                         url: url,
                         actionOptions: actionOptions
-                    });
+                    };
+                    body.setProperties(properties);
                 }
             }
         );
 
         /**
          * 获取action
+         *
+         * @return {er.Action | null}
          */
         ActionDialog.prototype.getAction = function () {
             var actionPanel = this.getBody();
             if (actionPanel) {
                 return actionPanel.get('action');
+            }
+            else {
+                return null;
             }
         };
 
@@ -123,16 +133,6 @@ define(
                 actionPanel.reload();
             }
         };
-
-        /**
-         * 销毁控件
-         */
-        ActionDialog.prototype.dispose = function () {
-            Dialog.prototype.dispose.apply(this, arguments);
-        };
-
-
-
 
         lib.inherits(ActionDialog, Dialog);
         require('esui').register(ActionDialog);
