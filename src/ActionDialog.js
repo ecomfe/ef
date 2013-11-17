@@ -73,6 +73,18 @@ define(
                     this
                 );
 
+                // 把`ActionPanel`代理的子Action事件再代理出来
+                panel.on(
+                    '*',
+                    function (e) {
+                        if (e.type.indexOf('action@') === 0) {
+                            // 不像`ActionPanel`，这里不需要修改`type`，所以直接触发
+                            this.fire(e);
+                        }
+                    },
+                    this
+                );
+
                 // 代理`ActionPanel`的相关事件
                 var Event = require('mini-event');
                 Event.delegate(panel, this, 'actionloadfail');
