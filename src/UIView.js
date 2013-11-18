@@ -230,7 +230,7 @@ define(
 
             var control = view.get(id);
             if (control) {
-                control.on(eventName, handler, control);
+                control.on(eventName, handler, view);
             }
 
             return handler;
