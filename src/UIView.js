@@ -1,7 +1,9 @@
 define(
     function (require) {
         var View = require('er/View');
-        var util = require('er/util');
+        var u = require('underscore');
+        
+        require('ef/ActionDialog');
 
         /**
          * 与ESUI结合的`View`基类
@@ -98,7 +100,7 @@ define(
         UIView.prototype.alert = function (content, title) {
             var options = typeof content === 'string'
                 ? { title: title || document.title, content: content }
-                : util.extend({}, content);
+                : u.clone(content);
             if (!options.viewContext) {
                 options.viewContext = this.viewContext;
             }
@@ -118,7 +120,7 @@ define(
         UIView.prototype.confirm = function (content, title) {
             var options = typeof content === 'string'
                 ? { title: title || document.title, content: content }
-                : util.mix({}, content);
+                : u.clone(content);
             if (!options.viewContext) {
                 options.viewContext = this.viewContext;
             }
@@ -138,18 +140,18 @@ define(
             //创建main
             var main = document.createElement('div');
             document.body.appendChild(main);
-            options = util.mix({ 
+
+            var defaults = {
                 width: 600,
                 needFoot: false,
                 draggable: true,
                 closeOnHide: true,
                 autoClose: true,
-                main: main
-            }, options);
-            if (!options.viewContext) {
-                options.viewContext = this.viewContext;
-            }
-            require('ef/ActionDialog');
+                main: main,
+                viewContext: this.viewContext
+            };
+            options = u.defaults({}, options, defaults);
+
             var ui = require('esui/main');
             var dialog = ui.create('ActionDialog', options);
 
@@ -176,6 +178,16 @@ define(
          */
         UIView.prototype.uiEvents = null;
 
+        /*
+         * 获取当前视图关联的控件事件声明。参考`uiEvents`属性
+         *
+         * @return {Object}
+         * @public
+         */
+        UIView.prototype.getUIEvents = function () {
+            return this.uiEvents || {};
+        };
+
         /**
          * 声明控件的额外属性。
          *
@@ -188,35 +200,13 @@ define(
         UIView.prototype.uiProperties = null;
 
         /**
-         * 深度克隆一个对象
+         * 声明当前视图关联的控件的额外属性，参考`uiProperties`属性
          *
-         * @param {*} source 待复制的对象
-         * @return {*}
-         * @inner
+         * @return {Object}
          */
-        function clone(source) {
-            var type = Object.prototype.toString.call(source);
-
-            if (type === '[object Array]') {
-                var result = [];
-                for (var i = 0; i < source.length; i++) {
-                    result.push(clone(source[i]));
-                }
-                return result;
-            }
-            else if (type === '[object Object]') {
-                var result = {};
-                for (var key in source) {
-                    if (Object.prototype.hasOwnProperty.call(source, key)) {
-                        result[key] = clone(source[key]);
-                    }
-                }
-                return result;
-            }
-            else {
-                return source;
-            }
-        }
+        UIView.prototype.getUIProperties = function () {
+            return this.uiProperties;
+        };
 
         /**
          * 给指定的控件绑定事件
@@ -233,14 +223,14 @@ define(
                 handler = view[handler];
             }
 
+            // TODO: mini-event后续会支持`false`作为处理函数，要考虑下
             if (typeof handler !== 'function') {
                 return handler;
             }
 
-            handler = util.bind(handler, view);
             var control = view.get(id);
             if (control) {
-                control.on(eventName, handler);
+                control.on(eventName, handler, control);
             }
 
             return handler;
@@ -253,16 +243,13 @@ define(
          * @protected
          */
         UIView.prototype.bindEvents = function () {
-            if (!this.uiEvents) {
+            var events = this.getUIEvents();
+            if (!events) {
                 return;
             }
 
-            // 由于需要修改保存在`uiEvents`里的函数，所以必须克隆一份，
-            // 不然会影响到`prototype`上的内容导致错乱
-            this.uiEvents = clone(this.uiEvents);
-
-            for (var key in this.uiEvents) {
-                if (!this.uiEvents.hasOwnProperty(key)) {
+            for (var key in events) {
+                if (!events.hasOwnProperty(key)) {
                     // 下面逻辑太长了，在这里先中断
                     continue;
                 }
@@ -272,15 +259,12 @@ define(
                 if (segments.length > 1) {
                     var id = segments[0];
                     var type = segments[1];
-                    var handler = this.uiEvents[key];
-                    // 为了还能用`xxx.un('click', this.uiEvents.xxx)`解除，
-                    // 因此这里要把值再设置回去
-                    this.uiEvents[key] = 
-                        bindEventToControl(this, id, type, handler);
+                    var handler = events[key];
+                    bindEventToControl(this, id, type, handler);
                 }
                 // 也可以是一个控件的id，值是对象，里面每一项都是一个事件类型
                 else {
-                    var map = this.uiEvents[key];
+                    var map = events[key];
 
                     if (typeof map !== 'object') {
                         return;
@@ -289,8 +273,7 @@ define(
                     for (var type in map) {
                         if (map.hasOwnProperty(type)) {
                             var handler = map[type];
-                            map[type] =
-                                bindEventToControl(this, key, type, handler);
+                            bindEventToControl(this, key, type, handler);
                         }
                     }
                 }
@@ -303,23 +286,18 @@ define(
         }
 
         /**
-         * 创建当前`UIView`使用的`ViewContext`对象
+         * 获取当前视图的名称，通常用于生成`ViewContext`
          *
-         * @return {ViewContext}
-         * @public
+         * @return {string}
+         * @protected
          */
-        UIView.prototype.createViewContext = function () {
-            var ViewContext = require('esui/ViewContext');
-            var name = this.name;
-
-            if (name) {
-                return new ViewContext(name);
+        UIView.prototype.getViewName = function () {
+            if (this.name) {
+                return this.name;
             }
 
             // 从构造函数把名字猜出来
-            if (!name) {
-                name = this.constructor && this.constructor.name;
-            }
+            var name = this.constructor && this.constructor.name;
             if (!name && this.constructor) {
                 // 用正则猜名字
                 var functionString = this.constructor.toString();
@@ -327,6 +305,7 @@ define(
                 // 去除函数名后面的空格
                 name = match && match[1].replace(/\s+$/g, '');
             }
+            // 再不行用计数
             if (!name) {
                 name = getGUID();
             }
@@ -355,7 +334,20 @@ define(
                 name = name.substring(1);
             }
 
-            return new ViewContext(name);
+            return name;
+        };
+
+        /**
+         * 创建当前`UIView`使用的`ViewContext`对象
+         *
+         * @return {ViewContext}
+         * @public
+         */
+        UIView.prototype.createViewContext = function () {
+            var ViewContext = require('esui/ViewContext');
+            var name = this.getViewName();
+
+            return new ViewContext(name || null);
         };
 
         /**
@@ -370,8 +362,8 @@ define(
             var container = document.getElementById(this.container);
             var options = {
                 viewContext: this.viewContext,
-                properties: this.uiProperties,
-                valueReplacer: require('er/util').bind(this.replaceValue, this)
+                properties: this.getUIProperties(),
+                valueReplacer: u.bind(this.replaceValue, this)
             };
             require('esui').init(container, options);
 

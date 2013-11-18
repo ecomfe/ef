@@ -1,12 +1,14 @@
 {
     "name": "ef",
-    "version": "3.0.2",
+    "version": "3.1.0-alpha.1",
     "maintainers": [
         { "name": "otakustay", "email": "otakustay@gmail.com" }
     ],
     "dependencies": {
-        "er": "3.0.x",
-        "esui": "3.0.x"
+        "er": "3.1.x",
+        "esui": "3.1.x",
+        "underscore": "1.4.x",
+        "mini-event": ">=0.9.0"
     },
     "main": "main",
     "description": "EF是ER与ESUI整合而成的高效率业务系统开发框架。",
