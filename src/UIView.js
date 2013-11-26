@@ -359,7 +359,7 @@ define(
         UIView.prototype.enterDocument = function () {
             this.viewContext = this.createViewContext();
 
-            var container = document.getElementById(this.container);
+            var container = this.getContainerElement();
             var options = {
                 viewContext: this.viewContext,
                 properties: this.getUIProperties(),
