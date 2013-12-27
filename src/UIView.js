@@ -365,7 +365,18 @@ define(
                 properties: this.getUIProperties(),
                 valueReplacer: u.bind(this.replaceValue, this)
             };
-            require('esui').init(container, options);
+            try {
+                require('esui').init(container, options);
+            }
+            catch (ex) {
+                var error = new Error(
+                    'ESUI initialization error on view '
+                    + 'because: ' + ex.message
+                );
+                error.actualError = ex;
+                throw error;
+            }
+
 
             this.bindEvents();
         };
