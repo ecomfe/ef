@@ -63,6 +63,16 @@ define(
         };
 
         /**
+         * 根据id获取控件实例，如无相关实例则返回`esui.SafeWrapper`
+         *
+         * @param {string} id 控件id
+         * @return {Control} 根据id获取的控件
+         */
+        UIView.prototype.getSafely = function (id) {
+            return this.viewContext.getSafely(id);
+        };
+
+        /**
          * 根据name获取当前视图下的控件组
          *
          * @param {string} name 控件组的名称
@@ -359,13 +369,24 @@ define(
         UIView.prototype.enterDocument = function () {
             this.viewContext = this.createViewContext();
 
-            var container = document.getElementById(this.container);
+            var container = this.getContainerElement();
             var options = {
                 viewContext: this.viewContext,
                 properties: this.getUIProperties(),
                 valueReplacer: u.bind(this.replaceValue, this)
             };
-            require('esui').init(container, options);
+            try {
+                require('esui').init(container, options);
+            }
+            catch (ex) {
+                var error = new Error(
+                    'ESUI initialization error on view '
+                    + 'because: ' + ex.message
+                );
+                error.actualError = ex;
+                throw error;
+            }
+
 
             this.bindEvents();
         };
