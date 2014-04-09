@@ -58,7 +58,7 @@ define(
             var panel = ui.create(panelType, properties);
             if (type === 'body') {
                 panel.on(
-                    'actionloaded',
+                    'actionattach',
                     function () {
                         this.resize();
 
@@ -72,7 +72,7 @@ define(
                             }
                         }
 
-                        this.fire('actionloaded');
+                        this.fire('actionattach');
                     },
                     this
                 );
@@ -91,6 +91,7 @@ define(
 
                 // 代理`ActionPanel`的相关事件
                 var Event = require('mini-event');
+                Event.delegate(panel, this, 'actionloaded');
                 Event.delegate(panel, this, 'actionloadfail');
                 Event.delegate(panel, this, 'actionloadabort');
             }

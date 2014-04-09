@@ -59,6 +59,12 @@
                 ui.init(document.body);
                 var panel = ui.get('panel');
                 panel.on(
+                    'actionattach',
+                    function () {
+                        console.log('attach', this.action);
+                    }
+                );
+                panel.on(
                     'actionloaded',
                     function () {
                         console.log('load', this.action);
