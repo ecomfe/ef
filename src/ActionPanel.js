@@ -43,8 +43,7 @@ define(
          * @param {Object} e 事件对象
          */
         function delegateActionEvent(e) {
-            var event = require('mini-event').fromEvent(
-                e, { preserveData: true, syncState: true });
+            var event = require('mini-event').fromEvent(e, { preserveData: true, syncState: true });
             event.type = 'action@' + e.type;
             this.fire(event);
         }
@@ -58,7 +57,7 @@ define(
             if (!e.isChildAction || e.container !== this.main.id) {
                 return;
             }
-            
+
             this.action = e.action;
 
             // 代理所有的子Action的事件
@@ -79,10 +78,10 @@ define(
             if (!e.isChildAction || e.container !== this.main.id) {
                 return;
             }
-            
+
             this.action = null;
             this.fire(
-                'actionloadfail', 
+                'actionloadfail',
                 { failType: e.failType, reason: e.reason }
             );
         }
@@ -98,7 +97,7 @@ define(
             if (!e.isChildAction || e.container !== this.main.id) {
                 return;
             }
-            
+
             this.fire('actionloadabort');
         }
 
@@ -129,9 +128,7 @@ define(
             }
 
             // Action正在加载，正确的`renderChildAction`得到的加载器有`abort`方法
-            if (Deferred.isPromise(action) 
-                && typeof action.abort === 'function'
-            ) {
+            if (Deferred.isPromise(action) && typeof action.abort === 'function') {
                 action.abort();
             }
             // 已经加载完的Action，但并不一定会有`leave`或`un`方法
@@ -141,20 +138,19 @@ define(
                 }
                 if (typeof action.leave === 'function') {
                     action.leave();
-                }  
-            } 
+                }
+            }
 
             this.action = null;
         };
 
-        var helper = require('esui/controlHelper');
         /**
          * 重构
          *
          * @protected
          * @override
          */
-        ActionPanel.prototype.repaint = helper.createRepaint(
+        ActionPanel.prototype.repaint = require('esui/painters').createRepaint(
             Panel.prototype.repaint,
             {
                 name: ['url', 'actionOptions'],
@@ -171,8 +167,8 @@ define(
 
                     var controller = require('er/controller');
                     panel.action = controller.renderChildAction(
-                        url, 
-                        panel.main.id, 
+                        url,
+                        panel.main.id,
                         actionOptions
                     );
 
