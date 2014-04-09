@@ -65,9 +65,11 @@ define(
                         if (this.autoClose) {
                             // 当子Action处理完成后对话框也一起销毁
                             var action = this.get('action');
-                            // 要阻止默认行为，因为后续整个Action会销毁，有任何进一步的行为（如跳转）都没用
-                            action.on('handlefinish', false);
-                            action.on('handlefinish', this.dispose, this);
+                            if (typeof action.on === 'function') {
+                                // 要阻止默认行为，因为后续整个Action会销毁，有任何进一步的行为（如跳转）都没用
+                                action.on('handlefinish', false);
+                                action.on('handlefinish', this.dispose, this);
+                            }
                         }
 
                         this.fire('actionloaded');
