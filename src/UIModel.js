@@ -49,7 +49,7 @@ define(
              * @return {string} 逗号分隔2个日期，均为YYYY-MM-dd格式
              */
             dateRange: function (range) {
-                return formatters.date(range.begin) 
+                return formatters.date(range.begin)
                     + ',' + formatters.date(range.end);
             },
             /**
@@ -71,7 +71,7 @@ define(
              * @return {string} 逗号分隔2个时间，均为YYYY-MM-dd HH:mm:ss格式
              */
             timeRange: function (range) {
-                return formatters.time(range.begin) 
+                return formatters.time(range.begin)
                     + ',' + formatters.time(range.end);
             }
         };

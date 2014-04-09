@@ -41,18 +41,18 @@ define(
             }
 
             // 如果原来就在请求数据，把原来的断掉
-            var xhr = workingRequests[node.id];
+            var xhr = tree.workingRequests[node.id];
             if (xhr) {
                 xhr.abort();
             }
             xhr = this.requestNodeData(node);
-            workingRequests[node.id] = xhr;
+            tree.workingRequests[node.id] = xhr;
             xhr.done(lib.bind(tree.expandNode, tree, node.id));
         }
 
         RemoteTreeStrategy.prototype.enableToggleStrategy = function (tree) {
             tree.on(
-                'expand', 
+                'expand',
                 lib.curry(expandNode, tree, this)
             );
             tree.on(
