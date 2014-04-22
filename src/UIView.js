@@ -2,7 +2,7 @@ define(
     function (require) {
         var View = require('er/View');
         var u = require('underscore');
-        
+
         require('ef/ActionDialog');
 
         /**
@@ -172,15 +172,15 @@ define(
 
         /*
          * 声明控件的事件。该属性有2种方式：
-         * 
+         *
          * - 以`id:eventName`为键，以处理函数为值。
          * - 以`id`为键，值为一个对象，对象中以`eventName`为键，处理函数为值。
-         * 
+         *
          * 在此处声明的事件，运行时的`this`对象均是`View`实例，而非控件的实例。
-         * 
+         *
          * 同时，在运行期，`UIView`会克隆该属性，将其中所有的处理函数都进行一次`bind`，
          * 将`this`指向自身，因此运行时的`uiEvents`与类声明时的不会相同。
-         * 
+         *
          * 如果需要解除某个事件的绑定，可以使用`.on('type', this.uiEvents.xxx)`进行。
          *
          * @type {Object}
@@ -337,7 +337,7 @@ define(
                 }
             );
             name = name.replace(
-                /[A-Z]/g, 
+                /[A-Z]/g,
                 function (match) { return '-' + match.toLowerCase(); }
             );
             if (name.charAt(0) === '-') {

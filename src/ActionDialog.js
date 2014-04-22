@@ -58,17 +58,21 @@ define(
             var panel = ui.create(panelType, properties);
             if (type === 'body') {
                 panel.on(
-                    'actionloaded',
+                    'actionattach',
                     function () {
                         this.resize();
 
                         if (this.autoClose) {
                             // 当子Action处理完成后对话框也一起销毁
                             var action = this.get('action');
-                            action.on('handlefinish', this.dispose, this);
+                            if (typeof action.on === 'function') {
+                                // 要阻止默认行为，因为后续整个Action会销毁，有任何进一步的行为（如跳转）都没用
+                                action.on('handlefinish', false);
+                                action.on('handlefinish', this.dispose, this);
+                            }
                         }
 
-                        this.fire('actionloaded');
+                        this.fire('actionattach');
                     },
                     this
                 );
@@ -87,6 +91,7 @@ define(
 
                 // 代理`ActionPanel`的相关事件
                 var Event = require('mini-event');
+                Event.delegate(panel, this, 'actionloaded');
                 Event.delegate(panel, this, 'actionloadfail');
                 Event.delegate(panel, this, 'actionloadabort');
             }
@@ -97,14 +102,13 @@ define(
             return panel;
         };
 
-        var helper = require('esui/controlHelper');
         /**
          * 重构
          *
          * @protected
          * @override
          */
-        ActionDialog.prototype.repaint = helper.createRepaint(
+        ActionDialog.prototype.repaint = require('esui/painters').createRepaint(
             Dialog.prototype.repaint,
             {
                 name: ['url', 'actionOptions'],

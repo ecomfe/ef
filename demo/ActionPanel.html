@@ -8,27 +8,38 @@
         require.config({
             packages: [
                 {
-                    name: 'esui',
-                    location: '../dep/esui/src',
-                    main: 'main'
-                },
-                {
                     name: 'er',
-                    location: '../dep/er/src',
+                    location: '../dep/er/3.1.0-alpha.8/src',
                     main: 'main'
                 },
                 {
-                    name: 'ef',
-                    location: '../src'
+                    name: 'esui',
+                    location: '../dep/esui/3.1.0-alpha.8/src',
+                    main: 'main'
                 },
                 {
                     name: 'underscore',
-                    location: '../dep/underscore/src',
+                    location: '../dep/underscore/1.5.2/src',
                     main: 'underscore'
                 },
                 {
+                    name: 'etpl',
+                    location: '../dep/etpl/2.1.0/src',
+                    main: 'main'
+                },
+                {
                     name: 'mini-event',
-                    location: '../dep/mini-event/src',
+                    location: '../dep/mini-event/1.0.0/src',
+                    main: 'main'
+                },
+                {
+                    name: 'moment',
+                    location: '../dep/moment/2.0.1/src',
+                    main: 'moment'
+                },
+                {
+                    name: 'ef',
+                    location: '../src',
                     main: 'main'
                 }
             ]
@@ -48,25 +59,31 @@
                 ui.init(document.body);
                 var panel = ui.get('panel');
                 panel.on(
-                    'actionloaded', 
+                    'actionattach',
+                    function () {
+                        console.log('attach', this.action);
+                    }
+                );
+                panel.on(
+                    'actionloaded',
                     function () {
                         console.log('load', this.action);
                     }
                 );
                 panel.on(
-                    'actionloadfail', 
+                    'actionloadfail',
                     function (e) {
                         console.log('fail', e.reason);
                     }
                 );
                 panel.on(
-                    'actionloadabort', 
+                    'actionloadabort',
                     function (e) {
                         console.log('abort', this.action);
                     }
                 );
                 panel.on(
-                    'action@test', 
+                    'action@test',
                     function (e) {
                         console.log('test', e);
                         e.preventDefault();

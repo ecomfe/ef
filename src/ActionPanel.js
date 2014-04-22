@@ -7,8 +7,8 @@ define(
         /**
          * 用于加载子Action的面板控件
          *
+         * @extends esui.Panel
          * @constructor
-         * @extends esui/Panel
          */
         function ActionPanel() {
             Panel.apply(this, arguments);
@@ -32,7 +32,7 @@ define(
         /**
          * 加载的Action的实例
          *
-         * @type {er/Action|er/Promise}
+         * @type {er.Action | er.meta.Promise}
          * @readonly
          */
         ActionPanel.prototype.action = null;
@@ -40,11 +40,10 @@ define(
         /**
          * 代理子Action的事件
          *
-         * @param {Object} e 事件对象
+         * @param {mini-event.Event} e 事件对象
          */
         function delegateActionEvent(e) {
-            var event = require('mini-event').fromEvent(
-                e, { preserveData: true, syncState: true });
+            var event = require('mini-event').fromEvent(e, { preserveData: true, syncState: true });
             event.type = 'action@' + e.type;
             this.fire(event);
         }
@@ -52,18 +51,31 @@ define(
         /**
          * 把已经加载的子Action赋值到控件上
          *
-         * @param {Object} e 事件对象
+         * @param {mini-event.Event} e 事件对象
          */
         function attachAction(e) {
             if (!e.isChildAction || e.container !== this.main.id) {
                 return;
             }
-            
+
             this.action = e.action;
 
             // 代理所有的子Action的事件
             if (typeof this.action.on === 'function') {
                 this.action.on('*', delegateActionEvent, this);
+            }
+
+            this.fire('actionattach');
+        }
+
+        /**
+         * 通知子Action加载完毕
+         *
+         * @param {mini-event.Event} e 事件对象
+         */
+        function notifyActionLoadComplete(e) {
+            if (!e.isChildAction || e.container !== this.main.id) {
+                return;
             }
 
             this.fire('actionloaded');
@@ -72,17 +84,17 @@ define(
         /**
          * 通知子Action加载失败
          *
-         * @param {Object} e 事件对象
+         * @param {mini-event.Event} e 事件对象
          * @param {string} e.reason 失败原因
          */
         function notifyActionLoadFailed(e) {
             if (!e.isChildAction || e.container !== this.main.id) {
                 return;
             }
-            
+
             this.action = null;
             this.fire(
-                'actionloadfail', 
+                'actionloadfail',
                 { failType: e.failType, reason: e.reason }
             );
         }
@@ -90,7 +102,7 @@ define(
         /**
          * 通知子Action加载中断
          *
-         * @param {Object} e 事件对象
+         * @param {mini-event.Event} e 事件对象
          * @param {string} e.reason 失败原因
          * @inner
          */
@@ -98,18 +110,19 @@ define(
             if (!e.isChildAction || e.container !== this.main.id) {
                 return;
             }
-            
+
             this.fire('actionloadabort');
         }
 
         /**
          * 初始化结构
          *
-         * @override
          * @protected
+         * @override
          */
         ActionPanel.prototype.initStructure = function () {
-            events.on('enteractioncomplete', attachAction, this);
+            events.on('enteraction', attachAction, this);
+            events.on('enteractioncomplete', notifyActionLoadComplete, this);
             events.on('actionnotfound', notifyActionLoadFailed, this);
             events.on('permissiondenied', notifyActionLoadFailed, this);
             events.on('actionfail', notifyActionLoadFailed, this);
@@ -129,9 +142,7 @@ define(
             }
 
             // Action正在加载，正确的`renderChildAction`得到的加载器有`abort`方法
-            if (Deferred.isPromise(action) 
-                && typeof action.abort === 'function'
-            ) {
+            if (Deferred.isPromise(action) && typeof action.abort === 'function') {
                 action.abort();
             }
             // 已经加载完的Action，但并不一定会有`leave`或`un`方法
@@ -141,20 +152,19 @@ define(
                 }
                 if (typeof action.leave === 'function') {
                     action.leave();
-                }  
-            } 
+                }
+            }
 
             this.action = null;
         };
 
-        var helper = require('esui/controlHelper');
         /**
          * 重构
          *
-         * @protected
          * @override
+         * @protected
          */
-        ActionPanel.prototype.repaint = helper.createRepaint(
+        ActionPanel.prototype.repaint = require('esui/painters').createRepaint(
             Panel.prototype.repaint,
             {
                 name: ['url', 'actionOptions'],
@@ -171,8 +181,8 @@ define(
 
                     var controller = require('er/controller');
                     panel.action = controller.renderChildAction(
-                        url, 
-                        panel.main.id, 
+                        url,
+                        panel.main.id,
                         actionOptions
                     );
 
@@ -196,7 +206,8 @@ define(
             this.disposeAction();
 
             // 移除注册的一堆方法
-            events.un('enteractioncomplete', attachAction, this);
+            events.un('enteraction', attachAction, this);
+            events.un('enteractioncomplete', notifyActionLoadComplete, this);
             events.un('actionnotfound', notifyActionLoadFailed, this);
             events.un('permissiondenied', notifyActionLoadFailed, this);
             events.un('actionfail', notifyActionLoadFailed, this);
