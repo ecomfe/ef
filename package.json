@@ -17,5 +17,13 @@
     },
     "main": "main",
     "description": "EF是ER与ESUI整合而成的高效率业务系统开发框架。",
-    "homepage": "https://github.com/ecomfe/ef"
+    "homepage": "https://github.com/ecomfe/ef",
+    "edp": {
+        "wwwroot": "/",
+        "depDir": "dep",
+        "srcDir": "src",
+        "loaderAutoConfig": "js,htm,html,tpl,vm,phtml",
+        "loaderUrl": "http://s1.bdstatic.com/r/www/cache/ecom/esl/1-8-0/esl.js",
+        "dependencies": {}
+    }
 }
