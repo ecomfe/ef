@@ -36,6 +36,10 @@ define(
                 return value;
             }
 
+            if (value === '@@' || value === '**') {
+                return this.model;
+            }
+
             var prefix = value.charAt(0);
             var actualValue = value.substring(1);
 
