@@ -1,19 +1,19 @@
 define(
     function (require) {
-        var View = require('er/View');
         var u = require('underscore');
+        var View = require('er/View');
 
         require('ef/ActionDialog');
 
         /**
+         * @class ef.UIView
+         *
          * 与ESUI结合的`View`基类
          *
          * @constructor
-         * @extends er/View
+         * @extends er.View
          */
-        function UIView() {
-            View.apply(this, arguments);
-        }
+        var exports = {};
 
         function getProperty(target, path) {
             var value = target;
@@ -31,7 +31,7 @@ define(
          * @return {*} 处理完的值
          * @public
          */
-        UIView.prototype.replaceValue = function (value) {
+        exports.replaceValue = function (value) {
             if (typeof value !== 'string') {
                 return value;
             }
@@ -62,7 +62,7 @@ define(
          * @return {Control=} 对应的控件
          * @protected
          */
-        UIView.prototype.get = function (id) {
+        exports.get = function (id) {
             return this.viewContext.get(id);
         };
 
@@ -72,7 +72,7 @@ define(
          * @param {string} id 控件id
          * @return {Control} 根据id获取的控件
          */
-        UIView.prototype.getSafely = function (id) {
+        exports.getSafely = function (id) {
             return this.viewContext.getSafely(id);
         };
 
@@ -83,7 +83,7 @@ define(
          * @return {ControlGroup} 对应的控件组
          * @protected
          */
-        UIView.prototype.getGroup = function (name) {
+        exports.getGroup = function (name) {
             return this.viewContext.getGroup(name);
         };
 
@@ -95,7 +95,7 @@ define(
          * @return {Control}
          * @proceted
          */
-        UIView.prototype.create = function (type, options) {
+        exports.create = function (type, options) {
             options = options || {};
             if (!options.viewContext) {
                 options.viewContext = this.viewContext;
@@ -111,7 +111,7 @@ define(
          * @return {esui/Dialog}
          * @protected
          */
-        UIView.prototype.alert = function (content, title) {
+        exports.alert = function (content, title) {
             var options = typeof content === 'string'
                 ? { title: title || document.title, content: content }
                 : u.clone(content);
@@ -131,7 +131,7 @@ define(
          * @return {esui/Dialog}
          * @protected
          */
-        UIView.prototype.confirm = function (content, title) {
+        exports.confirm = function (content, title) {
             var options = typeof content === 'string'
                 ? { title: title || document.title, content: content }
                 : u.clone(content);
@@ -150,7 +150,7 @@ define(
          * @return {esui/Dialog}
          * @protected
          */
-        UIView.prototype.popActionDialog = function (options) {
+        exports.popActionDialog = function (options) {
             //创建main
             var main = document.createElement('div');
             document.body.appendChild(main);
@@ -190,7 +190,7 @@ define(
          * @type {Object}
          * @public
          */
-        UIView.prototype.uiEvents = null;
+        exports.uiEvents = null;
 
         /*
          * 获取当前视图关联的控件事件声明。参考`uiEvents`属性
@@ -198,7 +198,7 @@ define(
          * @return {Object}
          * @public
          */
-        UIView.prototype.getUIEvents = function () {
+        exports.getUIEvents = function () {
             return this.uiEvents || {};
         };
 
@@ -211,14 +211,14 @@ define(
          * @type {Object}
          * @public
          */
-        UIView.prototype.uiProperties = null;
+        exports.uiProperties = null;
 
         /**
          * 声明当前视图关联的控件的额外属性，参考`uiProperties`属性
          *
          * @return {Object}
          */
-        UIView.prototype.getUIProperties = function () {
+        exports.getUIProperties = function () {
             return this.uiProperties;
         };
 
@@ -256,7 +256,7 @@ define(
          * @override
          * @protected
          */
-        UIView.prototype.bindEvents = function () {
+        exports.bindEvents = function () {
             var events = this.getUIEvents();
             if (!events) {
                 return;
@@ -305,7 +305,7 @@ define(
          * @return {string}
          * @protected
          */
-        UIView.prototype.getViewName = function () {
+        exports.getViewName = function () {
             if (this.name) {
                 return this.name;
             }
@@ -357,7 +357,7 @@ define(
          * @return {ViewContext}
          * @public
          */
-        UIView.prototype.createViewContext = function () {
+        exports.createViewContext = function () {
             var ViewContext = require('esui/ViewContext');
             var name = this.getViewName();
 
@@ -370,7 +370,7 @@ define(
          * @override
          * @protected
          */
-        UIView.prototype.enterDocument = function () {
+        exports.enterDocument = function () {
             this.viewContext = this.createViewContext();
 
             var container = this.getContainerElement();
@@ -401,15 +401,15 @@ define(
          * @override
          * @protected
          */
-        UIView.prototype.dispose = function () {
+        exports.dispose = function () {
             if (this.viewContext) {
                 this.viewContext.dispose();
                 this.viewContext = null;
             }
-            View.prototype.dispose.apply(this, arguments);
+            this.$super(arguments);
         };
 
-        require('er/util').inherits(UIView, View);
+        var UIView = require('eoo').create(View, exports);
         return UIView;
     }
 );

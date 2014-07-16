@@ -1,25 +1,32 @@
+/**
+ * Ecom Framework
+ * Copyright 2013 Baidu Inc. All rights reserved.
+ *
+ * @ignore
+ * @file ActionPanel
+ * @author otakustay
+ */
 define(
     function (require) {
-        var Panel = require('esui/Panel');
-        var lib = require('esui/lib');
         var events = require('er/events');
+        var Panel = require('esui/Panel');
 
         /**
+         * @class ef.ActionPanel
+         *
          * 用于加载子Action的面板控件
          *
          * @extends esui.Panel
          * @constructor
          */
-        function ActionPanel() {
-            Panel.apply(this, arguments);
-        }
+        var exports = {};
 
-        ActionPanel.prototype.type = 'ActionPanel';
+        exports.type = 'ActionPanel';
 
         /**
          * 设置HTML内容，`ActionPanel`没有这功能
          */
-        ActionPanel.prototype.setContent = function () {
+        exports.setContent = function () {
         };
 
         /**
@@ -27,7 +34,7 @@ define(
          *
          * @type {string}
          */
-        ActionPanel.prototype.actionType = null;
+        exports.actionType = null;
 
         /**
          * 加载的Action的实例
@@ -35,7 +42,7 @@ define(
          * @type {er.Action | er.meta.Promise}
          * @readonly
          */
-        ActionPanel.prototype.action = null;
+        exports.action = null;
 
         /**
          * 代理子Action的事件
@@ -120,7 +127,7 @@ define(
          * @protected
          * @override
          */
-        ActionPanel.prototype.initStructure = function () {
+        exports.initStructure = function () {
             events.on('enteraction', attachAction, this);
             events.on('enteractioncomplete', notifyActionLoadComplete, this);
             events.on('actionnotfound', notifyActionLoadFailed, this);
@@ -133,7 +140,7 @@ define(
         /**
          * 销毁控件上关联的Action
          */
-        ActionPanel.prototype.disposeAction = function () {
+        exports.disposeAction = function () {
             var Deferred = require('er/Deferred');
             var action = this.action;
 
@@ -164,7 +171,7 @@ define(
          * @override
          * @protected
          */
-        ActionPanel.prototype.repaint = require('esui/painters').createRepaint(
+        exports.repaint = require('esui/painters').createRepaint(
             Panel.prototype.repaint,
             {
                 name: ['url', 'actionOptions'],
@@ -202,7 +209,7 @@ define(
          *
          * @override
          */
-        ActionPanel.prototype.dispose = function () {
+        exports.dispose = function () {
             this.disposeAction();
 
             // 移除注册的一堆方法
@@ -214,7 +221,7 @@ define(
             events.un('enteractionfail', notifyActionLoadFailed, this);
             events.un('actionabort', notifyActionLoadAborted, this);
 
-            Panel.prototype.dispose.apply(this, arguments, this);
+            this.$super(arguments);
         };
 
         /**
@@ -222,13 +229,13 @@ define(
          *
          * @param {Object} [actionOptions] 子Action的额外数据
          */
-        ActionPanel.prototype.reload = function (actionOptions) {
+        exports.reload = function (actionOptions) {
             var url = this.url;
             this.url = null;
             this.setProperties({ url: url, actionOptions: actionOptions });
         };
 
-        lib.inherits(ActionPanel, Panel);
+        var ActionPanel = require('eoo').create(Panel, exports);
         require('esui').register(ActionPanel);
         return ActionPanel;
     }
