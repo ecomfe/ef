@@ -9,18 +9,17 @@
 define(
     function (require) {
         var u = require('underscore');
-        var lib = require('esui/lib');
         var Control = require('esui/Control');
 
         /**
+         * @class ef.ChildView
+         *
          * 子视图控件，用于加载一个{@link er.View}
          *
          * @constructor
          * @extends esui.Control
          */
-        function ChildView() {
-            Control.apply(this, arguments);
-        }
+        var exports = {};
 
         /**
          * 控件的类型，始终为`"ChildView"`
@@ -29,7 +28,7 @@ define(
          * @readonly
          * @override
          */
-        ChildView.prototype.type = 'ChildView';
+        exports.type = 'ChildView';
 
         /**
          * 重绘
@@ -37,7 +36,7 @@ define(
          * @protected
          * @override
          */
-        ChildView.prototype.repaint = require('esui/painters').createRepaint(
+        exports.repaint = require('esui/painters').createRepaint(
             Control.prototype.repaint,
             {
                 name: 'viewType',
@@ -57,7 +56,7 @@ define(
          *
          * 如果在视图模块加载过程中，调用了此方法是没有效果的，加载完后会继续把视图渲染出来
          */
-        ChildView.prototype.disposeView = function () {
+        exports.disposeView = function () {
             var view = this.get('view');
 
             if (view && typeof view.dispose === 'function') {
@@ -84,7 +83,7 @@ define(
          * @param {Mixed} View 加载完毕的视图构造函数或对象
          * @protected
          */
-        ChildView.prototype.renderView = function (View) {
+        exports.renderView = function (View) {
             // 仅当渲染完成阶段才会对View进行操作，销毁的时候这里不处理
             if (this.helper.isInStage('RENDERED')) {
                 this.loadedViewModule = View; // 存下来，后面还会用到的
@@ -102,7 +101,7 @@ define(
         /**
          * 刷新包含的视图
          */
-        ChildView.prototype.refresh = function () {
+        exports.refresh = function () {
             var viewModule = this.get('loadedViewModule');
             if (!viewModule) {
                 throw new Error('No view module loaded yet');
@@ -111,7 +110,7 @@ define(
             this.renderView(viewModule);
         };
 
-        lib.inherits(ChildView, Control);
+        var ChildView = require('eoo').create(Control, exports);
         require('esui').register(ChildView);
         return ChildView;
     }
