@@ -13,6 +13,7 @@
 
     <script>
         require.config({
+            waitSeconds: 1,
             'packages': [
                 {
                     'name': 'er',
@@ -48,6 +49,11 @@
                     'name': 'ef',
                     'location': '../src',
                     'main': 'main'
+                },
+                {
+                    'name': 'eoo',
+                    'location': '../dep/eoo/0.0.5/src',
+                    'main': 'oo'
                 }
             ],
             'paths': {}
@@ -64,6 +70,7 @@
         require(
             suits,
             function() {
+                require('UIView');
                 var jasmineEnv = jasmine.getEnv();
                 jasmineEnv.updateInterval = 1000;
 
