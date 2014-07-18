@@ -1,19 +1,11 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-  "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Jasmine Spec Runner</title>
-
-    <link rel="stylesheet" href="asset/css/jasmine.css">
-    <script src="asset/js/jasmine.js"></script>
-    <script src="asset/js/async.js"></script>
-    <script src="asset/js/jasmine-html.js"></script>
-    <script src="matchers.js"></script>
-    <script src="asset/js/esl.js"></script>
-
+    <meta charset="utf-8" />
+    <title>ChildView</title>
+    <script src="esl.js"></script>
     <script>
         require.config({
-            waitSeconds: 1,
             'packages': [
                 {
                     'name': 'er',
@@ -59,41 +51,26 @@
             'paths': {}
         });
     </script>
+    <style>
+        esui-child-view {
+            display: block;
+        }
+        esui-button {
+            display: inline-block;
+            border: 1px solid #333;
+        }
+    </style>
 </head>
 <body>
-    <div id="container"></div>
+    <esui-child-view data-ui-id="view" data-ui-view-type="TestView"></esui-child-view>
+    <esui-button data-ui-id="refresh">Refresh</esui-button>
     <script>
-        var container = document.getElementById('container');
-        var suits = [
-            'UIView'
-        ];
         require(
-            suits,
-            function() {
-                require('UIView');
-                var jasmineEnv = jasmine.getEnv();
-                jasmineEnv.updateInterval = 1000;
-
-                var htmlReporter = new jasmine.HtmlReporter();
-
-                jasmineEnv.addReporter(htmlReporter);
-
-                jasmineEnv.specFilter = function(spec) {
-                    return htmlReporter.specFilter(spec);
-                };
-
-                var currentWindowOnload = window.onload;
-
-                window.onload = function() {
-                    if (currentWindowOnload) {
-                        currentWindowOnload();
-                    }
-                    execJasmine();
-                };
-
-                function execJasmine() {
-                    jasmineEnv.execute();
-                }
+            ['esui', 'ef/ChildView', 'esui/Button'],
+            function (ui) {
+                ui.init(document.body);
+                var childView = ui.get('view');
+                ui.get('refresh').on('click', childView.refresh, childView)
             }
         );
     </script>

@@ -1,25 +1,32 @@
+/**
+ * Ecom Framework
+ * Copyright 2013 Baidu Inc. All rights reserved.
+ *
+ * @ignore
+ * @file ActionPanel
+ * @author otakustay
+ */
 define(
     function (require) {
-        var Panel = require('esui/Panel');
-        var lib = require('esui/lib');
         var events = require('er/events');
+        var Panel = require('esui/Panel');
 
         /**
+         * @class ef.ActionPanel
+         *
          * 用于加载子Action的面板控件
          *
+         * @extends esui.Panel
          * @constructor
-         * @extends esui/Panel
          */
-        function ActionPanel() {
-            Panel.apply(this, arguments);
-        }
+        var exports = {};
 
-        ActionPanel.prototype.type = 'ActionPanel';
+        exports.type = 'ActionPanel';
 
         /**
          * 设置HTML内容，`ActionPanel`没有这功能
          */
-        ActionPanel.prototype.setContent = function () {
+        exports.setContent = function () {
         };
 
         /**
@@ -27,24 +34,23 @@ define(
          *
          * @type {string}
          */
-        ActionPanel.prototype.actionType = null;
+        exports.actionType = null;
 
         /**
          * 加载的Action的实例
          *
-         * @type {er/Action|er/Promise}
+         * @type {er.Action | er.meta.Promise}
          * @readonly
          */
-        ActionPanel.prototype.action = null;
+        exports.action = null;
 
         /**
          * 代理子Action的事件
          *
-         * @param {Object} e 事件对象
+         * @param {mini-event.Event} e 事件对象
          */
         function delegateActionEvent(e) {
-            var event = require('mini-event').fromEvent(
-                e, { preserveData: true, syncState: true });
+            var event = require('mini-event').fromEvent(e, { preserveData: true, syncState: true });
             event.type = 'action@' + e.type;
             this.fire(event);
         }
@@ -52,18 +58,31 @@ define(
         /**
          * 把已经加载的子Action赋值到控件上
          *
-         * @param {Object} e 事件对象
+         * @param {mini-event.Event} e 事件对象
          */
         function attachAction(e) {
             if (!e.isChildAction || e.container !== this.main.id) {
                 return;
             }
-            
+
             this.action = e.action;
 
             // 代理所有的子Action的事件
             if (typeof this.action.on === 'function') {
                 this.action.on('*', delegateActionEvent, this);
+            }
+
+            this.fire('actionattach');
+        }
+
+        /**
+         * 通知子Action加载完毕
+         *
+         * @param {mini-event.Event} e 事件对象
+         */
+        function notifyActionLoadComplete(e) {
+            if (!e.isChildAction || e.container !== this.main.id) {
+                return;
             }
 
             this.fire('actionloaded');
@@ -72,17 +91,17 @@ define(
         /**
          * 通知子Action加载失败
          *
-         * @param {Object} e 事件对象
+         * @param {mini-event.Event} e 事件对象
          * @param {string} e.reason 失败原因
          */
         function notifyActionLoadFailed(e) {
             if (!e.isChildAction || e.container !== this.main.id) {
                 return;
             }
-            
+
             this.action = null;
             this.fire(
-                'actionloadfail', 
+                'actionloadfail',
                 { failType: e.failType, reason: e.reason }
             );
         }
@@ -90,7 +109,7 @@ define(
         /**
          * 通知子Action加载中断
          *
-         * @param {Object} e 事件对象
+         * @param {mini-event.Event} e 事件对象
          * @param {string} e.reason 失败原因
          * @inner
          */
@@ -98,18 +117,19 @@ define(
             if (!e.isChildAction || e.container !== this.main.id) {
                 return;
             }
-            
+
             this.fire('actionloadabort');
         }
 
         /**
          * 初始化结构
          *
-         * @override
          * @protected
+         * @override
          */
-        ActionPanel.prototype.initStructure = function () {
-            events.on('enteractioncomplete', attachAction, this);
+        exports.initStructure = function () {
+            events.on('enteraction', attachAction, this);
+            events.on('enteractioncomplete', notifyActionLoadComplete, this);
             events.on('actionnotfound', notifyActionLoadFailed, this);
             events.on('permissiondenied', notifyActionLoadFailed, this);
             events.on('actionfail', notifyActionLoadFailed, this);
@@ -120,7 +140,7 @@ define(
         /**
          * 销毁控件上关联的Action
          */
-        ActionPanel.prototype.disposeAction = function () {
+        exports.disposeAction = function () {
             var Deferred = require('er/Deferred');
             var action = this.action;
 
@@ -129,9 +149,7 @@ define(
             }
 
             // Action正在加载，正确的`renderChildAction`得到的加载器有`abort`方法
-            if (Deferred.isPromise(action) 
-                && typeof action.abort === 'function'
-            ) {
+            if (Deferred.isPromise(action) && typeof action.abort === 'function') {
                 action.abort();
             }
             // 已经加载完的Action，但并不一定会有`leave`或`un`方法
@@ -141,20 +159,19 @@ define(
                 }
                 if (typeof action.leave === 'function') {
                     action.leave();
-                }  
-            } 
+                }
+            }
 
             this.action = null;
         };
 
-        var helper = require('esui/controlHelper');
         /**
          * 重构
          *
-         * @protected
          * @override
+         * @protected
          */
-        ActionPanel.prototype.repaint = helper.createRepaint(
+        exports.repaint = require('esui/painters').createRepaint(
             Panel.prototype.repaint,
             {
                 name: ['url', 'actionOptions'],
@@ -171,8 +188,8 @@ define(
 
                     var controller = require('er/controller');
                     panel.action = controller.renderChildAction(
-                        url, 
-                        panel.main.id, 
+                        url,
+                        panel.main.id,
                         actionOptions
                     );
 
@@ -192,18 +209,19 @@ define(
          *
          * @override
          */
-        ActionPanel.prototype.dispose = function () {
+        exports.dispose = function () {
             this.disposeAction();
 
             // 移除注册的一堆方法
-            events.un('enteractioncomplete', attachAction, this);
+            events.un('enteraction', attachAction, this);
+            events.un('enteractioncomplete', notifyActionLoadComplete, this);
             events.un('actionnotfound', notifyActionLoadFailed, this);
             events.un('permissiondenied', notifyActionLoadFailed, this);
             events.un('actionfail', notifyActionLoadFailed, this);
             events.un('enteractionfail', notifyActionLoadFailed, this);
             events.un('actionabort', notifyActionLoadAborted, this);
 
-            Panel.prototype.dispose.apply(this, arguments, this);
+            this.$super(arguments);
         };
 
         /**
@@ -211,13 +229,13 @@ define(
          *
          * @param {Object} [actionOptions] 子Action的额外数据
          */
-        ActionPanel.prototype.reload = function (actionOptions) {
+        exports.reload = function (actionOptions) {
             var url = this.url;
             this.url = null;
             this.setProperties({ url: url, actionOptions: actionOptions });
         };
 
-        lib.inherits(ActionPanel, Panel);
+        var ActionPanel = require('eoo').create(Panel, exports);
         require('esui').register(ActionPanel);
         return ActionPanel;
     }

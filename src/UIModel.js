@@ -3,15 +3,14 @@ define(
         var Model = require('er/Model');
 
         /**
+         * @class ef.UIModel
+         *
          * 处理ESUI场景的`Model`实现
          *
          * @constructor
-         * @extends er/Model
-         * @public
+         * @extends er.Model
          */
-        function UIModel() {
-            Model.apply(this, arguments);
-        }
+        var exports = {};
 
         /**
          * 补0
@@ -28,9 +27,8 @@ define(
          * 内置的格式化函数
          *
          * @type {Object}
-         * @public
          */
-        var formatters = UIModel.formatters = {
+        var formatters = {
             /**
              * 格式化日期
              *
@@ -49,7 +47,7 @@ define(
              * @return {string} 逗号分隔2个日期，均为YYYY-MM-dd格式
              */
             dateRange: function (range) {
-                return formatters.date(range.begin) 
+                return formatters.date(range.begin)
                     + ',' + formatters.date(range.end);
             },
             /**
@@ -71,7 +69,7 @@ define(
              * @return {string} 逗号分隔2个时间，均为YYYY-MM-dd HH:mm:ss格式
              */
             timeRange: function (range) {
-                return formatters.time(range.begin) 
+                return formatters.time(range.begin)
                     + ',' + formatters.time(range.end);
             }
         };
@@ -83,7 +81,7 @@ define(
          * @type {Object}
          * @public
          */
-        UIModel.prototype.formatters = {};
+        exports.formatters = {};
 
         /**
          * 设置值
@@ -94,11 +92,11 @@ define(
          * @param {boolean=} options.silent 如果该值为true则不触发`change`事件
          * @public
          */
-        UIModel.prototype.set = function (name, value, options) {
+        exports.set = function (name, value, options) {
             if (this.formatters.hasOwnProperty(name)) {
                 value = this.formatters[name](value);
             }
-            Model.prototype.set.call(this, name, value, options);
+            this.$super([name, value, options]);
         };
 
         /**
@@ -109,7 +107,7 @@ define(
          * @param {boolean=} options.silent 如果该值为true则不触发`change`事件
          * @public
          */
-        UIModel.prototype.fill = function (extension, options) {
+        exports.fill = function (extension, options) {
             for (var name in extension) {
                 if (extension.hasOwnProperty(name)
                     && this.formatters.hasOwnProperty(name)
@@ -120,7 +118,7 @@ define(
                 }
             }
 
-            Model.prototype.fill.apply(this, arguments);
+            this.$super(arguments);
         };
 
         /**
@@ -129,7 +127,7 @@ define(
          * @param {Array.<string> | string...} names 需要的属性名列表
          * @return {Object} 包含`names`参数指定的属性的对象
          */
-        UIModel.prototype.getPart = function (names) {
+        exports.getPart = function (names) {
             if (Object.prototype.toString.call(names) !== '[object Array]') {
                 names = [].slice.call(arguments);
             }
@@ -142,7 +140,10 @@ define(
             return part;
         };
 
-        require('er/util').inherits(UIModel, Model);
+        var UIModel = require('eoo').create(Model, UIModel);
+
+        UIModel.formatters = formatters;
+
         return UIModel;
     }
 );

@@ -3,27 +3,29 @@ define(
         var lib = require('esui/lib');
         var TreeStrategy = require('esui/TreeStrategy');
 
-        function RemoteTreeStrategy (options) {
+        var exports = {};
+
+        exports.constructor = function (options) {
             if (options.requestMethod) {
                 options.requestMethod = options.requestMethod.toLowerCase();
             }
             TreeStrategy.apply(this, arguments);
             this.workingRequests = {};
-        }
+        };
 
-        RemoteTreeStrategy.prototype.urlTemplate = '';
+        exports.urlTemplate = '';
 
-        RemoteTreeStrategy.prototype.requestMethod = 'get';
+        exports.requestMethod = 'get';
 
-        RemoteTreeStrategy.prototype.getRequestURL = function (node) {
+        exports.getRequestURL = function (node) {
             return lib.format(this.urlTemplate, node);
         };
 
-        RemoteTreeStrategy.prototype.getRequestData = function (node) {
+        exports.getRequestData = function (node) {
             return null;
         };
 
-        RemoteTreeStrategy.prototype.requestNodeData = function (node) {
+        exports.requestNodeData = function (node) {
             var url = this.getRequestURL(node);
             var data = this.getRequestData(node);
             var ajax = require('er/ajax');
@@ -41,18 +43,18 @@ define(
             }
 
             // 如果原来就在请求数据，把原来的断掉
-            var xhr = workingRequests[node.id];
+            var xhr = tree.workingRequests[node.id];
             if (xhr) {
                 xhr.abort();
             }
             xhr = this.requestNodeData(node);
-            workingRequests[node.id] = xhr;
+            tree.workingRequests[node.id] = xhr;
             xhr.done(lib.bind(tree.expandNode, tree, node.id));
         }
 
-        RemoteTreeStrategy.prototype.enableToggleStrategy = function (tree) {
+        exports.enableToggleStrategy = function (tree) {
             tree.on(
-                'expand', 
+                'expand',
                 lib.curry(expandNode, tree, this)
             );
             tree.on(
@@ -63,6 +65,7 @@ define(
             );
         };
 
+        var RemoteTreeStrategy = require('eoo').create(TreeStrategy, exports);
         lib.inherits(RemoteTreeStrategy, TreeStrategy);
         return RemoteTreeStrategy;
     }
