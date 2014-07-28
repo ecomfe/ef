@@ -144,7 +144,7 @@ define(
          * 跳转前 hook
          */
         exports.enterAction = function () {
-            this.url = this.action.context.url;
+            this.url = this.action.context.url.toString();
         };
 
         /**
