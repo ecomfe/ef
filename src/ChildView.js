@@ -67,6 +67,17 @@ define(
         };
 
         /**
+         * 销毁释放控件
+         *
+         * @override
+         */
+        exports.dispose = function () {
+            this.disposeView();
+
+            this.$super(arguments);
+        };
+
+        /**
          * 代理View的事件
          *
          * @param {mini-event.Event} e 事件对象
