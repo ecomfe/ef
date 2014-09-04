@@ -44,9 +44,9 @@ define(
                     childView.disposeView();
 
                     var Deferred = require('er/Deferred');
-                    childView.view = Deferred.require([viewType]);
-                    childView.view.then(u.bind(childView.fire, childView, 'viewloaded'));
-                    childView.view.then(u.bind(childView.renderView, childView));
+                    var loadingView = Deferred.require([viewType]);
+                    loadingView.then(u.bind(childView.fire, childView, 'viewloaded'));
+                    childView.view = loadingView.then(u.bind(childView.renderView, childView));
                 }
             }
         );
@@ -81,6 +81,7 @@ define(
          * 渲染加载完毕的视图对象
          *
          * @param {Mixed} View 加载完毕的视图构造函数或对象
+         * @return {View}
          * @protected
          */
         exports.renderView = function (View) {
@@ -96,6 +97,8 @@ define(
 
                 view.on('*', delegateViewEvents, this);
             }
+
+            return this.view;
         };
 
         /**
