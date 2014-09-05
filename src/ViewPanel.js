@@ -78,6 +78,15 @@ define(
         }
 
         /**
+         * 生成内部加载View的name
+         *
+         * @return {string}
+         */
+        function getViewName() {
+            return this.viewContext.id + '-' + this.id;
+        }
+
+        /**
          * 渲染加载完毕的视图对象
          *
          * @param {Mixed} View 加载完毕的视图构造函数或对象
@@ -89,6 +98,7 @@ define(
             if (this.helper.isInStage('RENDERED')) {
                 this.loadedViewModule = View; // 存下来，后面还会用到的
                 var view = this.view = typeof View === 'function' ? new View() : View;
+                view.name = getViewName.call(this);
                 view.model = this.get('model');
                 view.container = this.main.id;
                 view.render();
