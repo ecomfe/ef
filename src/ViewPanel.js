@@ -3,7 +3,7 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @ignore
- * @file ChildView
+ * @file ViewPanel
  * @author otakustay
  */
 define(
@@ -12,7 +12,7 @@ define(
         var Control = require('esui/Control');
 
         /**
-         * @class ef.ChildView
+         * @class ef.ViewPanel
          *
          * 子视图控件，用于加载一个{@link er.View}
          *
@@ -22,13 +22,13 @@ define(
         var exports = {};
 
         /**
-         * 控件的类型，始终为`"ChildView"`
+         * 控件的类型，始终为`"ViewPanel"`
          *
          * @type {string}
          * @readonly
          * @override
          */
-        exports.type = 'ChildView';
+        exports.type = 'ViewPanel';
 
         /**
          * 重绘
@@ -40,13 +40,13 @@ define(
             Control.prototype.repaint,
             {
                 name: 'viewType',
-                paint: function (childView, viewType) {
-                    childView.disposeView();
+                paint: function (viewPanel, viewType) {
+                    viewPanel.disposeView();
 
                     var Deferred = require('er/Deferred');
                     var loadingView = Deferred.require([viewType]);
-                    loadingView.then(u.bind(childView.fire, childView, 'viewloaded'));
-                    childView.view = loadingView.then(u.bind(childView.renderView, childView));
+                    loadingView.then(u.bind(viewPanel.fire, viewPanel, 'viewloaded'));
+                    viewPanel.view = loadingView.then(u.bind(viewPanel.renderView, viewPanel));
                 }
             }
         );
@@ -123,8 +123,8 @@ define(
             this.renderView(viewModule);
         };
 
-        var ChildView = require('eoo').create(Control, exports);
-        require('esui').register(ChildView);
-        return ChildView;
+        var ViewPanel = require('eoo').create(Control, exports);
+        require('esui').register(ViewPanel);
+        return ViewPanel;
     }
 );
