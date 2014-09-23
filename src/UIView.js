@@ -50,6 +50,9 @@ define(
                     ? getProperty(value, path.slice(1))
                     : value;
             }
+            else if (prefix === '#' && u.isFunction(this[actualValue])) {
+                return this[actualValue]();
+            }
             else {
                 return value;
             }
