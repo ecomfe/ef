@@ -1,28 +1,35 @@
+/**
+ * Ecom Framework
+ * Copyright 2013 Baidu Inc. All rights reserved.
+ *
+ * @ignore
+ * @file ActionDialog
+ * @author otakustay
+ */
 define(
     function (require) {
-        var Dialog = require('esui/Dialog');
-        var lib = require('esui/lib');
         var ui = require('esui/main');
+        var Dialog = require('esui/Dialog');
 
-        require('ef/ActionPanel');
+        require('./ActionPanel');
 
         /**
+         * @class ef.ActionDialog
+         *
          * 用于加载子Action的面板控件
          *
          * @constructor
          * @extends esui/Panel
          */
-        function ActionDialog() {
-            Dialog.apply(this, arguments);
-        }
+        var exports = {};
 
-        ActionDialog.prototype.type = 'ActionDialog';
-        ActionDialog.prototype.styleType = 'Dialog';
+        exports.type = 'ActionDialog';
+        exports.styleType = 'Dialog';
 
         /**
          * 设置HTML内容，`ActionDialog`没有这功能
          */
-        ActionDialog.prototype.setContent = function () {
+        exports.setContent = function () {
         };
 
         /**
@@ -34,7 +41,7 @@ define(
          * @return {ef.ActionPanel | esui.Panel} panel
          * @protected
          */
-        ActionDialog.prototype.createBF = function (type, mainDOM) {
+        exports.createBF = function (type, mainDOM) {
             if (mainDOM) {
                 this.content = mainDOM.innerHTML;
             }
@@ -58,17 +65,21 @@ define(
             var panel = ui.create(panelType, properties);
             if (type === 'body') {
                 panel.on(
-                    'actionloaded',
+                    'actionattach',
                     function () {
                         this.resize();
 
                         if (this.autoClose) {
                             // 当子Action处理完成后对话框也一起销毁
                             var action = this.get('action');
-                            action.on('handlefinish', this.dispose, this);
+                            if (typeof action.on === 'function') {
+                                // 要阻止默认行为，因为后续整个Action会销毁，有任何进一步的行为（如跳转）都没用
+                                action.on('handlefinish', false);
+                                action.on('handlefinish', this.dispose, this);
+                            }
                         }
 
-                        this.fire('actionloaded');
+                        this.fire('actionattach');
                     },
                     this
                 );
@@ -87,6 +98,7 @@ define(
 
                 // 代理`ActionPanel`的相关事件
                 var Event = require('mini-event');
+                Event.delegate(panel, this, 'actionloaded');
                 Event.delegate(panel, this, 'actionloadfail');
                 Event.delegate(panel, this, 'actionloadabort');
             }
@@ -97,14 +109,13 @@ define(
             return panel;
         };
 
-        var helper = require('esui/controlHelper');
         /**
          * 重构
          *
          * @protected
          * @override
          */
-        ActionDialog.prototype.repaint = helper.createRepaint(
+        exports.repaint = require('esui/painters').createRepaint(
             Dialog.prototype.repaint,
             {
                 name: ['url', 'actionOptions'],
@@ -125,7 +136,7 @@ define(
          *
          * @return {er.Action | null}
          */
-        ActionDialog.prototype.getAction = function () {
+        exports.getAction = function () {
             var actionPanel = this.getBody();
             if (actionPanel) {
                 return actionPanel.get('action');
@@ -139,14 +150,14 @@ define(
         /**
          * 重新加载管理的子Action(代理Panel的)
          */
-        ActionDialog.prototype.reload = function () {
+        exports.reload = function () {
             var actionPanel = this.getBody();
             if (actionPanel) {
                 actionPanel.reload();
             }
         };
 
-        lib.inherits(ActionDialog, Dialog);
+        var ActionDialog = require('eoo').create(Dialog, exports);
         require('esui').register(ActionDialog);
         return ActionDialog;
     }
