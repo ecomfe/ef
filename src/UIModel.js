@@ -140,7 +140,7 @@ define(
             return part;
         };
 
-        var UIModel = require('eoo').create(Model, UIModel);
+        var UIModel = require('eoo').create(Model, exports);
 
         UIModel.formatters = formatters;
 
