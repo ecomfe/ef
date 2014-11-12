@@ -66,6 +66,9 @@ define(
             }
 
             this.action = e.action;
+            
+            // 进入 action 前的处理
+            this.action.on('enter', this.enterAction, this);
 
             // 代理所有的子Action的事件
             if (typeof this.action.on === 'function') {
@@ -135,6 +138,13 @@ define(
             events.on('actionfail', notifyActionLoadFailed, this);
             events.on('enteractionfail', notifyActionLoadFailed, this);
             events.on('actionabort', notifyActionLoadAborted, this);
+        };
+        
+        /**
+         * 跳转前 hook
+         */
+        exports.enterAction = function () {
+            this.url = this.action.context.url.toString();
         };
 
         /**
