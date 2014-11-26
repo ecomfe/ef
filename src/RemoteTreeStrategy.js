@@ -1,6 +1,5 @@
 define(
     function (require) {
-        var lib = require('esui/lib');
         var TreeStrategy = require('esui/TreeStrategy');
 
         var exports = {};
@@ -66,7 +65,6 @@ define(
         };
 
         var RemoteTreeStrategy = require('eoo').create(TreeStrategy, exports);
-        lib.inherits(RemoteTreeStrategy, TreeStrategy);
         return RemoteTreeStrategy;
     }
 );
