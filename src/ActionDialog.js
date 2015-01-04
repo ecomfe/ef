@@ -67,8 +67,6 @@ define(
                 panel.on(
                     'actionattach',
                     function () {
-                        this.resize();
-
                         if (this.autoClose) {
                             // 当子Action处理完成后对话框也一起销毁
                             var action = this.get('action');
@@ -80,6 +78,15 @@ define(
                         }
 
                         this.fire('actionattach');
+                    },
+                    this
+                );
+
+                // action enter完毕时，resize一下窗口
+                panel.on(
+                    'actionloaded',
+                    function () {
+                        this.resize();
                     },
                     this
                 );
