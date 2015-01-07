@@ -262,33 +262,44 @@ define(
                 return;
             }
 
+            u.each(events, this.bindUIEvent, this);
             for (var key in events) {
                 if (!events.hasOwnProperty(key)) {
                     // 下面逻辑太长了，在这里先中断
                     continue;
                 }
 
-                // 可以用`submit:click`的形式在指定控件上绑定指定类型的控件
-                var segments = key.split(':');
-                if (segments.length > 1) {
-                    var id = segments[0];
-                    var type = segments[1];
-                    var handler = events[key];
-                    bindEventToControl(this, id, type, handler);
+            }
+        };
+
+        /**
+         * 绑定一个事件，可以直接调用这个方法来绑定`uiEvents`属性无法处理的动态的事件
+         *
+         * @protected
+         * @method UIView#bindUIEvent
+         * @param {string} compositeKey 复杂的键名，参考`uiEvents`属性的介绍
+         * @param {string | Object | Function} 对应的处理函数，参考`uiEvents`属性的介绍
+         */
+        exports.bindUIEvent = function (compositeKey, handler) {
+            // 可以用`submit:click`的形式在指定控件上绑定指定类型的控件
+            var segments = compositeKey.split(':');
+            if (segments.length > 1) {
+                var id = segments[0];
+                var type = segments[1];
+                bindEventToControl(this, id, type, handler);
+            }
+            // 也可以是一个控件的id，值是对象，里面每一项都是一个事件类型
+            else {
+                var map = handler;
+
+                if (typeof map !== 'object') {
+                    return;
                 }
-                // 也可以是一个控件的id，值是对象，里面每一项都是一个事件类型
-                else {
-                    var map = events[key];
 
-                    if (typeof map !== 'object') {
-                        return;
-                    }
-
-                    for (var type in map) {
-                        if (map.hasOwnProperty(type)) {
-                            var handler = map[type];
-                            bindEventToControl(this, key, type, handler);
-                        }
+                for (var type in map) {
+                    if (map.hasOwnProperty(type)) {
+                        var handler = map[type];
+                        bindEventToControl(this, compositeKey, type, handler);
                     }
                 }
             }
