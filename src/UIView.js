@@ -1,3 +1,11 @@
+/**
+ * EF
+ * Copyright 2013 Baidu Inc. All rights reserved.
+ *
+ * @ignore
+ * @file 与ESUI结合的视图基类
+ * @author otakustay
+ */
 define(
     function (require) {
         var u = require('underscore');
@@ -6,11 +14,9 @@ define(
         require('ef/ActionDialog');
 
         /**
-         * @class ef.UIView
-         *
          * 与ESUI结合的`View`基类
          *
-         * @constructor
+         * @class ef.UIView
          * @extends er.View
          */
         var exports = {};
@@ -45,21 +51,20 @@ define(
 
             if (prefix === '@' || prefix === '*') {
                 var path = actualValue.split('.');
-                var value = this.model.get(path[0]);
+                var firstLevelPropertyValue = this.model.get(path[0]);
                 return path.length > 1
-                    ? getProperty(value, path.slice(1))
-                    : value;
+                    ? getProperty(firstLevelPropertyValue, path.slice(1))
+                    : firstLevelPropertyValue;
             }
-            else {
-                return value;
-            }
+
+            return value;
         };
 
         /**
          * 根据id获取当前视图下的控件
          *
          * @param {string} id 控件的id
-         * @return {Control=} 对应的控件
+         * @return {esui.Control | undefined} 对应的控件
          * @protected
          */
         exports.get = function (id) {
@@ -70,7 +75,7 @@ define(
          * 根据id获取控件实例，如无相关实例则返回`esui.SafeWrapper`
          *
          * @param {string} id 控件id
-         * @return {Control} 根据id获取的控件
+         * @return {esui.Control} 根据id获取的控件
          */
         exports.getSafely = function (id) {
             return this.viewContext.getSafely(id);
@@ -107,13 +112,13 @@ define(
          * 显示一条提示信息
          *
          * @param {string | Object} content 提示的内容或完整的配置项
-         * @param {string=} title 提示框的标题，如`content`提供配置项则无此参数
-         * @return {esui/Dialog}
+         * @param {string} [title] 提示框的标题，如`content`提供配置项则无此参数
+         * @return {esui.Dialog}
          * @protected
          */
         exports.alert = function (content, title) {
             var options = typeof content === 'string'
-                ? { title: title || document.title, content: content }
+                ? {title: title || document.title, content: content}
                 : u.clone(content);
             if (!options.viewContext) {
                 options.viewContext = this.viewContext;
@@ -127,13 +132,13 @@ define(
          * 显示一条确认信息
          *
          * @param {string | Object} content 提示的内容或完整的配置项
-         * @param {string=} title 提示框的标题，如`content`提供配置项则无此参数
-         * @return {esui/Dialog}
+         * @param {string} [title] 提示框的标题，如`content`提供配置项则无此参数
+         * @return {esui.Dialog}
          * @protected
          */
         exports.confirm = function (content, title) {
             var options = typeof content === 'string'
-                ? { title: title || document.title, content: content }
+                ? {title: title || document.title, content: content}
                 : u.clone(content);
             if (!options.viewContext) {
                 options.viewContext = this.viewContext;
@@ -147,11 +152,11 @@ define(
          * 显示ActionDialog
          *
          * @param {Object} options 参数
-         * @return {esui/Dialog}
+         * @return {esui.Dialog}
          * @protected
          */
         exports.popActionDialog = function (options) {
-            //创建main
+            // 创建main
             var main = document.createElement('div');
             document.body.appendChild(main);
 
@@ -228,8 +233,8 @@ define(
          * @param {UIView} view View对象实例
          * @param {string} id 控件的id
          * @param {string} eventName 事件名称
-         * @param {function | string} handler 事件处理函数，或者对应的方法名
-         * @return {function} 绑定到控件上的事件处理函数，不等于`handler`参数
+         * @param {Function | string} handler 事件处理函数，或者对应的方法名
+         * @return {Function} 绑定到控件上的事件处理函数，不等于`handler`参数
          * @inner
          */
         function bindEventToControl(view, id, eventName, handler) {
@@ -278,7 +283,7 @@ define(
          * @protected
          * @method UIView#bindUIEvent
          * @param {string} compositeKey 复杂的键名，参考`uiEvents`属性的介绍
-         * @param {string | Object | Function} 对应的处理函数，参考`uiEvents`属性的介绍
+         * @param {string | Object | Function} handler 对应的处理函数，参考`uiEvents`属性的介绍
          */
         exports.bindUIEvent = function (compositeKey, handler) {
             // 可以用`submit:click`的形式在指定控件上绑定指定类型的控件
@@ -296,12 +301,12 @@ define(
                     return;
                 }
 
-                for (var type in map) {
-                    if (map.hasOwnProperty(type)) {
-                        var handler = map[type];
+                u.each(
+                    map,
+                    function (handler, type) {
                         bindEventToControl(this, compositeKey, type, handler);
                     }
-                }
+                );
             }
         };
 
@@ -353,7 +358,9 @@ define(
             );
             name = name.replace(
                 /[A-Z]/g,
-                function (match) { return '-' + match.toLowerCase(); }
+                function (match) {
+                    return '-' + match.toLowerCase();
+                }
             );
             if (name.charAt(0) === '-') {
                 name = name.substring(1);
