@@ -267,14 +267,13 @@ define(
                 return;
             }
 
-            u.each(events, this.bindUIEvent, this);
-            for (var key in events) {
-                if (!events.hasOwnProperty(key)) {
-                    // 下面逻辑太长了，在这里先中断
-                    continue;
-                }
-
-            }
+            u.each(
+                events,
+                function (handler, key) {
+                    this.bindUIEvent(key, handler);
+                },
+                this
+            );
         };
 
         /**
@@ -305,7 +304,8 @@ define(
                     map,
                     function (handler, type) {
                         bindEventToControl(this, compositeKey, type, handler);
-                    }
+                    },
+                    this
                 );
             }
         };
