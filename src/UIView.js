@@ -10,6 +10,7 @@ define(
     function (require) {
         var u = require('underscore');
         var View = require('er/View');
+        var eoo = require('eoo');
 
         require('ef/ActionDialog');
 
@@ -27,6 +28,16 @@ define(
                 value = value[path[i]];
             }
 
+            return value;
+        }
+
+        /**
+         * 默认的valueParse实现
+         *
+         * @param {string} value 输入值
+         * @return {string} 输出值
+         */
+        function defaultValueParser(value) {
             return value;
         }
 
@@ -56,6 +67,9 @@ define(
                     ? getProperty(firstLevelPropertyValue, path.slice(1))
                     : firstLevelPropertyValue;
             }
+
+            var valueParser = this.getValueParser() || defaultValueParser;
+            value = valueParser(value);
 
             return value;
         };
@@ -427,7 +441,9 @@ define(
             this.$super(arguments);
         };
 
-        var UIView = require('eoo').create(View, exports);
+        eoo.defineAccessor(exports, 'valueParser');
+
+        var UIView = eoo.create(View, exports);
         return UIView;
     }
 );
