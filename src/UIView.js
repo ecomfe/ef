@@ -32,16 +32,6 @@ define(
         }
 
         /**
-         * 默认的valueParse实现
-         *
-         * @param {string} value 输入值
-         * @return {string} 输出值
-         */
-        function defaultValueParser(value) {
-            return value;
-        }
-
-        /**
          * 替换元素属性中的特殊值
          *
          * @param {string} value 需要处理的值
@@ -68,8 +58,8 @@ define(
                     : firstLevelPropertyValue;
             }
 
-            var valueParser = this.getValueParser() || defaultValueParser;
-            value = valueParser(value);
+            var valueParser = this.getValueParser();
+            value = valueParser ? valueParser.parse(value) : value;
 
             return value;
         };
