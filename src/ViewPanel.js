@@ -135,6 +135,17 @@ define(
             this.renderView(view);
         };
 
+        /**
+         * 销毁view
+         *
+         * @override
+         */
+        exports.dispose = function () {
+            this.disposeView();
+
+            this.$super(arguments);
+        };
+
         var ViewPanel = require('eoo').create(Control, exports);
         require('esui').register(ViewPanel);
         return ViewPanel;
