@@ -52,7 +52,7 @@ define(
         exports.repaint = require('esui/painters').createRepaint(
             Control.prototype.repaint,
             {
-                name: 'viewType',
+                name: ['viewType', 'model'],
                 paint: function (viewPanel, viewType) {
                     viewPanel.disposeView();
 
