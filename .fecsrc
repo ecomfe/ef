@@ -1,0 +1,11 @@
+{
+    "files": [
+        "src/**/*.js"
+    ],
+    "htmlcs": {
+        "viewport": false
+    },
+    "htmlhint": {
+        "style-disabled": false
+    }
+}

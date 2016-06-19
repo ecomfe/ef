@@ -402,7 +402,7 @@ define(
                 valueReplacer: u.bind(this.replaceValue, this)
             };
             try {
-                require('esui').init(container, options);
+                this.parseDocument(container, options);
             }
             catch (ex) {
                 var error = new Error(
@@ -415,6 +415,17 @@ define(
 
 
             this.bindEvents();
+        };
+
+        /**
+         * 解析给定的DOM元素关初始化控件
+         *
+         * @protected
+         * @param {HTMLElement} container 容器元素
+         * @param {Obejct} options 相关配置项
+         */
+        exports.parseDocument = function (container, options) {
+            require('esui').init(container, options);
         };
 
         /**
