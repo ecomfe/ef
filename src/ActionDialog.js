@@ -35,7 +35,7 @@ define(
         /**
          * 构建对话框主内容和底部内容
          *
-         * @param {"foot" | "body"} type 面板类型
+         * @param {string} type 面板类型，值为`"foot"`或`"body"`
          * @param {HTMLElement} mainDOM body或foot主元素
          *
          * @return {ef.ActionPanel | esui.Panel} panel
@@ -148,9 +148,8 @@ define(
             if (actionPanel) {
                 return actionPanel.get('action');
             }
-            else {
-                return null;
-            }
+
+            return null;
         };
 
 

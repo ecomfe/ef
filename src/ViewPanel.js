@@ -2,10 +2,10 @@
  * Ecom Framework
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file ViewPanel
  * @author otakustay
  */
+
 define(
     function (require) {
         var u = require('underscore');
@@ -84,7 +84,7 @@ define(
          * @param {mini-event.Event} e 事件对象
          */
         function delegateViewEvents(e) {
-            var event = require('mini-event').fromEvent(e, { preserveData: true, syncState: true });
+            var event = require('mini-event').fromEvent(e, {preserveData: true, syncState: true});
             event.type = 'view@' + e.type;
             this.fire(event);
         }
