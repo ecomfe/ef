@@ -43,7 +43,7 @@ define(
          */
         exports.createBF = function (type, mainDOM) {
             if (mainDOM) {
-                this.content = mainDOM.innerHTML;
+                this[type === 'body' ? 'content' : 'foot'] = mainDOM.innerHTML;
             }
             else {
                 mainDOM = document.createElement('div');
