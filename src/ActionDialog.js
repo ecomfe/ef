@@ -35,7 +35,7 @@ define(
         /**
          * 构建对话框主内容和底部内容
          *
-         * @param {"foot" | "body"} type 面板类型
+         * @param {string} type 面板类型，值为`"foot"`或`"body"`
          * @param {HTMLElement} mainDOM body或foot主元素
          *
          * @return {ef.ActionPanel | esui.Panel} panel
@@ -67,8 +67,6 @@ define(
                 panel.on(
                     'actionattach',
                     function () {
-                        this.resize();
-
                         if (this.autoClose) {
                             // 当子Action处理完成后对话框也一起销毁
                             var action = this.get('action');
@@ -80,6 +78,15 @@ define(
                         }
 
                         this.fire('actionattach');
+                    },
+                    this
+                );
+
+                // action enter完毕时，resize一下窗口
+                panel.on(
+                    'actionloaded',
+                    function () {
+                        this.resize();
                     },
                     this
                 );
@@ -101,6 +108,8 @@ define(
                 Event.delegate(panel, this, 'actionloaded');
                 Event.delegate(panel, this, 'actionloadfail');
                 Event.delegate(panel, this, 'actionloadabort');
+            } else {
+                this.main.appendChild(mainDOM);
             }
 
             panel.render();
@@ -141,9 +150,8 @@ define(
             if (actionPanel) {
                 return actionPanel.get('action');
             }
-            else {
-                return null;
-            }
+
+            return null;
         };
 
 

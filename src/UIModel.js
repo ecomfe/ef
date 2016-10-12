@@ -1,3 +1,11 @@
+/**
+ * Ecom Framework
+ * Copyright 2013 Baidu Inc. All rights reserved.
+ *
+ * @file UIModel
+ * @author otakustay
+ */
+
 define(
     function (require) {
         var Model = require('er/Model');
@@ -29,6 +37,7 @@ define(
          * @type {Object}
          */
         var formatters = {
+
             /**
              * 格式化日期
              *
@@ -40,6 +49,7 @@ define(
                     + pad(date.getMonth() + 1) + '-'
                     + pad(date.getDate());
             },
+
             /**
              * 格式化日期范围
              *
@@ -50,6 +60,7 @@ define(
                 return formatters.date(range.begin)
                     + ',' + formatters.date(range.end);
             },
+
             /**
              * 格式化时间
              *
@@ -62,6 +73,7 @@ define(
                     + pad(time.getMinutes()) + ':'
                     + pad(time.getSeconds());
             },
+
             /**
              * 格式化时间范围
              *
@@ -124,7 +136,7 @@ define(
         /**
          * 根据传入的属性名获取一个组装后的对象
          *
-         * @param {Array.<string> | string...} names 需要的属性名列表
+         * @param {string[]} names 需要的属性名列表
          * @return {Object} 包含`names`参数指定的属性的对象
          */
         exports.getPart = function (names) {
@@ -140,7 +152,7 @@ define(
             return part;
         };
 
-        var UIModel = require('eoo').create(Model, UIModel);
+        var UIModel = require('eoo').create(Model, exports);
 
         UIModel.formatters = formatters;
 

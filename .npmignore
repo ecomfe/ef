@@ -1,0 +1,9 @@
+.edpproj/
+demo/
+dep/
+doc/
+lib/
+test/
+.fecsrc
+edp-build-config
+module.conf

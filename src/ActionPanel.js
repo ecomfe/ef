@@ -50,7 +50,7 @@ define(
          * @param {mini-event.Event} e 事件对象
          */
         function delegateActionEvent(e) {
-            var event = require('mini-event').fromEvent(e, { preserveData: true, syncState: true });
+            var event = require('mini-event').fromEvent(e, {preserveData: true, syncState: true});
             event.type = 'action@' + e.type;
             this.fire(event);
         }
@@ -105,7 +105,7 @@ define(
             this.action = null;
             this.fire(
                 'actionloadfail',
-                { failType: e.failType, reason: e.reason }
+                {failType: e.failType, reason: e.reason}
             );
         }
 
@@ -242,7 +242,7 @@ define(
         exports.reload = function (actionOptions) {
             var url = this.url;
             this.url = null;
-            this.setProperties({ url: url, actionOptions: actionOptions });
+            this.setProperties({url: url, actionOptions: actionOptions});
         };
 
         var ActionPanel = require('eoo').create(Panel, exports);

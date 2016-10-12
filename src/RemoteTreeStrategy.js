@@ -1,7 +1,16 @@
+/**
+ * Ecom Framework
+ * Copyright 2013 Baidu Inc. All rights reserved.
+ *
+ * @file RemoteTreeStrategy
+ * @deprecated
+ * @author otakustay
+ */
+
 define(
     function (require) {
-        var lib = require('esui/lib');
         var TreeStrategy = require('esui/TreeStrategy');
+        var lib = require('esui/lib');
 
         var exports = {};
 
@@ -66,7 +75,6 @@ define(
         };
 
         var RemoteTreeStrategy = require('eoo').create(TreeStrategy, exports);
-        lib.inherits(RemoteTreeStrategy, TreeStrategy);
         return RemoteTreeStrategy;
     }
 );
