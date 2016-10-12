@@ -109,6 +109,9 @@ define(
                 Event.delegate(panel, this, 'actionloadfail');
                 Event.delegate(panel, this, 'actionloadabort');
             }
+            else {
+                this.main.appendChild(mainDOM);
+            }
 
             panel.render();
             this.addChild(panel, type);
