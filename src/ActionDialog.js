@@ -108,7 +108,8 @@ define(
                 Event.delegate(panel, this, 'actionloaded');
                 Event.delegate(panel, this, 'actionloadfail');
                 Event.delegate(panel, this, 'actionloadabort');
-            } else {
+            }
+            else {
                 this.main.appendChild(mainDOM);
             }
 
