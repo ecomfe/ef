@@ -94,7 +94,7 @@ define(
          */
         exports.set = function (name, value, options) {
             if (this.formatters.hasOwnProperty(name)) {
-                value = this.formatters[name](value);
+                value = this.formatters[name].call(this, value);
             }
             this.$super([name, value, options]);
         };
@@ -114,7 +114,7 @@ define(
                 ) {
                     var formatter = this.formatters[name];
                     var value = extension[name];
-                    extension[name] = formatter(value);
+                    extension[name] = formatter.call(this, value);
                 }
             }
 
